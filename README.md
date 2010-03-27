@@ -73,7 +73,7 @@ Idea:
           ::DepthFirst
           ::BreadthFirst
         ::Shape
-          ::Height
+          ::Balancing
           ::Branching
 
 A user may interact with two namespaces from the Evergreen public API:
