@@ -72,7 +72,8 @@ Idea:
           ::DepthFirst
           ::BreadthFirst
         ::Shape
-          ::HeightBalanced
+          ::Height
+          ::Branching
 
 A user may interact with two namespaces from the Evergreen public API:
 
@@ -97,5 +98,9 @@ If the user wants to, he can picks whatever additionnal behavior he wants:
     # equivalent to:
 
     tree = Evergreen::Tree::Binary(:type => :avl, :traversal => :post_order, :search => :iterative)
+
+    # or even:
+
+    tree = Evergreen::Tree::Raw(:branching_number => 2, :height => :balanced, :traversal => :post_order, :search => :iterative)
 
 
