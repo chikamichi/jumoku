@@ -3,6 +3,7 @@
 ## Synopsis
 
 Ruby lacks a solid, user-friendly tree library. The closest to this is [RubyTree](http://github.com/evolve75/RubyTree "RubyTree on Github"), a great piece of code, but it has some drawbacks:
+
 * it's class-based, hence its difficult to "mixin" behavior
 * the API is quite poorly designed (CamelCased, painful chained accessors, ...)
 * it's not versatile enough
