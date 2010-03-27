@@ -56,7 +56,7 @@ Idea:
         ::BinaryTree                                    binary/
         ::AVL                                             self_balanced.rb (avl, red-black, ... modules)
         ::RedBlackTree                                  
-      ::Tree (classes)                                types/
+      ::Tree (classes)                                trees/
         ::Raw                                           raw.rb
         ::Binary                                        binaries.rb
         ::AVL
@@ -118,5 +118,10 @@ By the way, not every behavior is available for a given tree kind, so a checking
 
 ### What about graphs?
 
-Trees are a particular kind of graphs, for which two of its vertices (nodes) are connected by exactly one path. Thus, maybe a general graph library would be useful, Evergreen being one particular subset. Too much burden, hey :)
+Trees are a particular kind of graphs, for which two of its vertices (nodes) are connected by exactly one path. Thus, maybe a general graph library would be useful, Evergreen being one particular subset.
+
+What I'd like is something like this:
+
+* *evergreen* => the dead-simple, ruby-powered tree lib. Provides you with only two implementations: raw tree and binary tree. Limited set of functionalities.
+* *evergreen-igraph* => kind of evergreen on steroïds. C-powered through the igraph ruby binding (need to install the C lib hence). Take all the great features from igraph and wrap them in a tree-oriented abstraction layer which make it easy to create specialized trees (self-balanced, AVL, neat traversal algorithms, and so on).
 
