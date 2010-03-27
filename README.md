@@ -104,4 +104,4 @@ If the user wants to, he can picks whatever additionnal behavior he wants:
 
     tree = Evergreen::Tree::Raw(:branching_number => 2, :height => :balanced, :traversal => :post_order, :search => :iterative)
 
-
+By the way, not every behavior is available for a given tree kind, so a checking mechanism should be built-in (I think there's no need to be too restrictive here, we can trust the users to make consistent options choices and not feel appalled if Evergreen throws a `InconsistentBehaviorSetError` at their face; that is). To make it easy, we should have a simple way to freeze some behaviors attribute in specialized tree kinds. For instance, one should not be able to pass the `:branching_number` option to an `AVL` tree (either it raises an error or is ignored silently).
