@@ -122,8 +122,8 @@ Trees are a particular kind of graphs, for which two of its vertices (nodes) are
 
 What I'd like is something like this:
 
-* *evergreen* => the dead-simple, ruby-powered tree lib. Provides you with only one implementation : "raw" tree (a general k-tree, that is free branching number, no nodes validation hooks, ... just the tree structure and accessors). Limited set of functionalities (no more complicated behaviors on-demand...). *Advantages*: simple. *Drawbacks*: simple.
-* *evergreen-igraph* => kind of evergreen on steroïds. C-powered through the igraph ruby binding (need to install the C lib hence). Take all the great features from igraph and wrap them in a tree-oriented abstraction layer which make it easy to create specialized trees (self-balanced, AVL, neat traversal algorithms, and so on). *Advantages*: fully fledged. *Drawbacks*: none?
+* **evergreen** => the dead-simple, ruby-powered tree lib. Provides you with only one implementation : "raw" tree (a general k-tree, that is free branching number, no nodes validation hooks, ... just the tree structure and accessors). Limited set of functionalities (no more complicated behaviors on-demand...). **Advantages**: simple. **Drawbacks**: simple.
+* **evergreen-igraph** => kind of evergreen on steroïds. C-powered through the igraph ruby binding (need to install the C lib hence). Take all the great features from igraph and wrap them in a tree-oriented abstraction layer which make it easy to create specialized trees (self-balanced, AVL, neat traversal algorithms, and so on). **Advantages**: fully fledged. **Drawbacks**: none?
 
 The two flavours would share the exact same API (evergreen-igraph's API being larger than evergreen's), so that switching between the two is a no-brainer.
 
