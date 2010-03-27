@@ -68,7 +68,7 @@ Idea:
           ::Recursive                                     search_algo.rb
           ::Iterative                                     traversal_algo.rb
         ::Traversal                                       shape_algo.rb
-          ::PreOrder
+          ::PreOrder                                      validations.rb
           ::InOrder
           ::PostOrder
           ::DepthFirst
@@ -76,6 +76,7 @@ Idea:
         ::Shape
           ::Balancing
           ::Branching
+        ::Validations
 
 A user may interact with two namespaces from the Evergreen public API:
 
