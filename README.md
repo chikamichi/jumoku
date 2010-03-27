@@ -51,7 +51,7 @@ Idea:
 
       Public API:
       ::As (modules)                                  as/
-        ::RawTree                                       raw.rb
+        ::RawTree                                       raw.rb  => Evergreen's core
         ::BinaryTree                                    binary/
         ::AVL                                             self_balancing.rb (avl, red-black, ... modules)
         ::RedBlackTree                                  
