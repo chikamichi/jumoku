@@ -6,6 +6,7 @@ Ruby lacks a solid, user-friendly tree library. The closest to this is [RubyTree
 
 * it's class-based, hence its difficult to "mixin" behavior
 * the API is quite poorly designed (CamelCased, painful chained accessors, ...)
+* unique names!
 * it's not versatile enough
 
 What would be great is a modular library providing us with tree behaviors (modules) and raw tree classes to inherit from if we ever need to.
