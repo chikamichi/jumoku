@@ -63,7 +63,7 @@ Idea:
 
       Private (implementation) API:
       ::Behaviors (modules, extended)                 behaviors/
-        ::Search                                        search/
+        ::Search                                          
           ::Recursive                                     search_algo.rb
           ::Iterative                                     traversal_algo.rb
         ::Traversal                                       shape_algo.rb
