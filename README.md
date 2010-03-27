@@ -43,7 +43,7 @@ You could also be more specific about your needs:
 
     myTree = Evergreen::Tree::Binary.new(:traversal => :post_order)
 
-## Code organisation
+## Code organisation and APIs
 
 Idea:
 
@@ -92,7 +92,9 @@ So, for instance, the AVL tree made made available in the `Evergreen::As::AVL` m
 * including the generic `Evergreen::As::RawTree` module (which does *not* rely on any `Behaviors`)
 * extending appropriate behaviors : `Behaviors::Shape::HeightBalanced` (at least).
 
-If the user wants to, he can picks whatever additionnal behavior he wants:
+## Maybe?
+
+If the user *wants to*, he can picks whatever additionnal behavior he wants:
 
     tree = Evergreen::Tree::AVL(:traversal => :post_order, :search => :iterative)
 
