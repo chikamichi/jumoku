@@ -127,3 +127,5 @@ What I'd like is something like this:
 
 The two flavours would share the exact same API (evergreen-igraph's API being larger than evergreen's), so that switching between the two is a no-brainer.
 
+What'd be just *great* is to ship both flavours within the same library gem. When installing the gem, you'd have to pass an explicit option to install the igraph flavour, which requires the C backend. You could also install it afterwards using a rake task.
+
