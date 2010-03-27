@@ -94,6 +94,12 @@ So, for instance, the AVL tree made made available in the `Evergreen::As::AVL` m
 
 ## Maybe?
 
+### Tools
+
+Why not providing some `Evergreen::ComputationTools`?
+
+### Tree on demand
+
 If the user *wants to*, he can picks whatever additionnal behavior he wants:
 
     tree = Evergreen::Tree::AVL(:traversal => :post_order, :search => :iterative)
@@ -107,3 +113,8 @@ If the user *wants to*, he can picks whatever additionnal behavior he wants:
     tree = Evergreen::Tree::Raw(:branching_number => 2, :height => :balanced, :traversal => :post_order, :search => :iterative)
 
 By the way, not every behavior is available for a given tree kind, so a checking mechanism should be built-in (I think there's no need to be too restrictive here, we can trust the users to make consistent options choices and not feel appalled if Evergreen throws a `InconsistentBehaviorSetError` at their face; that is). To make it easy, we should have a simple way to freeze some behaviors attribute in specialized tree kinds. For instance, one should not be able to pass the `:branching_number` option to an `AVL` tree (either it raises an error or is ignored silently).
+
+### What about graphs?
+
+Trees are a particular kind of graphs, for which two of its vertices (nodes) are connected by exactly one path. Thus, maybe a general graph library would be useful, Evergreen being one particular subset. Too much burden, hey :)
+
