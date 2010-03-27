@@ -53,7 +53,7 @@ Idea:
       ::As (modules)                                  as/
         ::RawTree                                       raw.rb  => Evergreen's core
         ::BinaryTree                                    binary/
-        ::AVL                                             self_balancing.rb (avl, red-black, ... modules)
+        ::AVL                                             self_balanced.rb (avl, red-black, ... modules)
         ::RedBlackTree                                  
       ::Tree (classes)                                types/
         ::Raw                                           raw.rb
