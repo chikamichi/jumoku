@@ -21,11 +21,12 @@ Fortunately, a few ruby-powered graph libraries exist (and a ruby binding for th
 What we really want is the simplest DSL possible:
 
     tree = Evergreen.tree
-    # tree is now a raw tree object shipping with defaults options:
-    # - no constraint on the branching number
-    # - nodes ain't need to be unique
-    # - it is a directed tree, from root to leaves
-    # It mimics a hierarchy.
+
+`tree` is now a raw tree object shipping with defaults options:
+
+* no constraint on the branching number
+* nodes ain't need to be unique
+* it is a directed tree, from root to leaves
 
 What if we want to customize it a bit?
 
