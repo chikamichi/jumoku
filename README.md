@@ -14,19 +14,26 @@ What would be great is a modular library providing us with a dead-simple tree be
 
 Trees are just simple graphs, with specific constraints on edges (branches) and vertices (nodes/leaves) management. The average tree has one constraint: its nodes must be connected by exactly one path.
 
-Fortunately, a few ruby-powered graph libraries exist (and a ruby binding for the igraph C backend, but that'd be a burden). evergreen could make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), as its backend. The library would hence be quite minimal: just another implementation of the `Graphy::Digraph` with appropriate constraints, packaged in a nice tree-oriented DSL (nodes, leaves, children, branches, and so on). *+*: Really straightforward, not much work to achieve, and fully-fledged.
+Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), using it as its backend. The library will hence be quite minimal: just another implementation of the `Graphy::Digraph` with appropriate constraints, packaged in a nice tree-oriented DSL (nodes, leaves, children, branches, and so on). *+*: Really straightforward, not much work to achieve, and fully-fledged.
 
 ## Examples
 
-What we really want is the simplest DSL possible:
+What we really want is the simplest DSL possible. Either:
 
     tree = Evergreen.tree
 
+or
+
+    class MyTree
+      include Evergreen::Tree
+    end
+    tree = MyTree.new
+
 `tree` is now a raw tree object shipping with defaults options:
 
-* no constraint on the branching number
+* no constraint for the branching number
 * nodes ain't need to be unique
-* it is a directed tree, from root to leaves
+* it is a directed tree, flowing from root to leaves
 
 What if we want to customize it a bit?
 
@@ -38,21 +45,7 @@ What if we want to customize it a bit?
 
 Then, we can think about implementing specialized tree (binaries, AVL, Red-Black...) and the appropriate set of search and traversal algorithms.
 
-## Ideas
+## Notes
 
-One issue with Graphy, as with any other graph lib outthere, is that it provides classes, not modules. I forked Graphy in order to try to make it module-based (adding a class layer btw). This would allow to mixin Graphy's graph behavior rather than type and turn evergreen into a module-based library as well:
-
-    class MyTree
-      include Evergreen::Tree # this a module now
-    end
-
-    module Evergreen
-      include Graphy
-
-      module Tree
-        include Graphy::Digraph # this is a module now
-
-        # redefine things so as to make it behave like a tree-graph
-      end
-    end
+One issue with Graphy, as with any other graph lib outthere, is that it provides classes, not modules. I forked Graphy and switch from a class-based implementation to a module-based one (adding a class layer btw, so the public API remains the same). Hence both behaviors are provided: mixin and subclassing. evergreen can in turn provides the same flexibility.
 
