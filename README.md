@@ -38,3 +38,21 @@ What if we want to customize it a bit?
 
 Then, we can think about implementing specialized tree (binaries, AVL, Red-Black...) and the appropriate set of search and traversal algorithms.
 
+## Ideas
+
+One issue with Graphy, as with any other graph lib outthere, is that it provides classes, not modules. I forked Graphy in order to try to make it module-based (adding a class layer btw). This would allow to mixin Graphy's graph behavior rather than type and turn evergreen into a module-based library as well:
+
+    class MyTree
+      include Evergreen::Tree # this a module now
+    end
+
+    module Evergreen
+      include Graphy
+
+      module Tree
+        include Graphy::Digraph # this is a module now
+
+        # redefine things so as to make it behave like a tree-graph
+      end
+    end
+
