@@ -9,6 +9,10 @@ require 'pp'
 #require 'activesupport/lib/active_support/secure_random'
 require 'activesupport'
 
+require 'facets/openobject'
+require 'facets/hash'
+
 require 'ext/ext'
+require 'evergreen/raw_tree_node'
 require 'evergreen/raw_tree'
 
