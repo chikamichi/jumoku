@@ -12,38 +12,39 @@ What would be great is a modular library providing us with a dead-simple tree be
 
 ## What about graphs?
 
-Trees are just simple graphs, with specific constraints on edges (branches) and vertices (nodes/leaves) management. The average tree has one constraint: its nodes must be connected by exactly one path.
+Trees are just simple graphs, with specific constraints on edges (branches) and vertices (nodes/leaves) management. In graph theory, a tree is defined as a graph in which any two vertices (so-called nodes) are connected by exactly one simple path. In other words, any connected graph without cycles is a tree. A forest is a disjoint union of trees. Tree may or may not be directed, may or may not be rooted, have constraints on their branching number, etc. but fundamentally the sole requirement is that of the acyclic-connected rule.
 
-Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), using it as its backend. The library will hence be quite minimal: just another implementation of the `Graphy::Digraph` with appropriate constraints, packaged in a nice tree-oriented DSL (nodes, leaves, children, branches, and so on). *+*: Really straightforward, not much work to achieve, and fully-fledged.
+Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), using it as its backend. The library will hence be quite minimal: just another implementation of the `Graphy::Digraph` with appropriate constraints, packaged in a nice tree-oriented DSL (let's talk about nodes, leaves, children, branching and so on). Really straightforward, not much work to achieve, alleviating pain of designing the whole package from scratch while gaining the ability to reuse high-performance traversal/search algorithms.
 
 ## Examples
 
-What we really want is the simplest DSL possible. Either:
+What we really want is the simplest DSL possible. Either using inheritance/direct initialization:
 
-    tree = Evergreen.tree
+    class MyTree < Evergreen::Tree; end
+    tree = Evergreen::Tree.new
 
-or
+or mixing-in a module builder:
 
     class MyTree
-      include Evergreen::Tree
+      include Evergreen::TreeBuilder
     end
     tree = MyTree.new
 
 `tree` is now a raw tree object shipping with defaults options:
 
 * no constraint for the branching number
-* nodes ain't need to be unique
+* nodes ain't need to be unique as far as their naming is concerned
 * it is a directed tree, flowing from root to leaves
 
 What if we want to customize it a bit?
 
-    tree = Evergreen.tree do |conf|
+    tree = Evergreen::Tree.new do |conf|
       conf.branching_number = 4     # at most 4 children per node
       conf.unique = true            # no duplicated node names allowed
       conf.direction = :bottom_up   # default is :top_down
     end
 
-Then, we can think about implementing specialized tree (binaries, AVL, Red-Black...) and the appropriate set of search and traversal algorithms.
+Then, we can think about implementing specialized trees (binaries, AVL, Red-Black...) and the appropriate set of search/traversal algorithms if needed.
 
 ## Notes
 
