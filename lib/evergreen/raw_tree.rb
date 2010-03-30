@@ -4,9 +4,14 @@ module Evergreen
   # behavior. Those implementations are under the control of the {TreeAPI}.
   #
   # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
-  # connected, acyclic graphs. Using {Graphy::UndirectedGraphBuilder} as its backends, 
+  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backends, 
   # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
   # acyclic).
+  #
+  # Note that a node can be any Object. There is no "node type", therefore arguments which
+  # are expected to be nodes are simply labelled as "`node`". A nice object type to us as
+  # a node would be an OpenStruct or an OpenObject (from the Facets library), as it makes
+  # nodes versatile handlers.
   #
   # This builder defines a few methods not required by the API so as to maintain consistency
   # in the DSL (for instance, aliasing `*vertex` to `*node`, etc.)
@@ -22,6 +27,7 @@ module Evergreen
     # * one or several trees to copy (will be merged if multiple)
     #
     # @param *params [Hash] the initialization parameters
+    # @return [RawTree]
     #def implementation_initialize(*params)
     def initialize(*params)
       raise ArgumentError if params.any? do |p|
@@ -44,10 +50,24 @@ module Evergreen
       super # Delegates to Graphy then.
     end
 
+    # By definition, a tree is undirected.
+    #
+    # @return [Boolean] false
     def directed?
       return false
     end
 
+    # Adds the node to the tree.
+    #
+    # For convenience, you may pass a branch as the parameter,
+    # which one node already exists in the tree and the other is
+    # to be added.
+    #
+    # @overload add_node!(n)
+    #   @param [node] n
+    # @overload add_node!(b)
+    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    # @return [RawTree] self
     def add_node! u, v = nil
       if nodes.empty?
         add_vertex! u
@@ -66,7 +86,12 @@ module Evergreen
     # As a tree is an undirected structure, the order of the parameter is of
     # no importance : `add_branch!(u,v) == add_branch!(v,u)`.
     #
-    # @param
+    # @overload add_branch!(i, j)
+    #   @param [node] i
+    #   @param [node] j there is no order constraint on the nodes couple
+    # @overload add_branch!(b)
+    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    # @return [RawTree] self
     def add_branch! u, v = nil
       if has_node? u and has_node? v
         unless has_branch? u, v
@@ -88,6 +113,17 @@ module Evergreen
       end
     end
 
+    # Removes a node from the tree.
+    #
+    # You cannot remove non terminal nodes as it would break the
+    # connectivity constraint of the tree.
+    #
+    # I may add an option which would allow to force removal
+    # of internal nodes and return two new trees from this
+    # destructive operation.
+    #
+    # @param [node] u
+    # @return [RawTree] self
     def remove_node! u
       if terminal? u
         remove_vertex! u
@@ -97,10 +133,27 @@ module Evergreen
       end
     end
 
+    # Removes a branch from the tree.
+    #
+    # You cannot remove non terminal branches as it would break
+    # the connectivity constraint of the tree.
+    #
+    # I may add an option which would allow to force removal
+    # of internal nodes and return two new trees from this
+    # destructive operation.
+    #
+    # @overload remove_branch!(i, j)
+    #   @param [node] i
+    #   @param [node] j
+    # @overload remove_branch!(b)
+    #   @param [Branch] b
+    # @return [RawTree] self
     def remove_branch! u, v = nil, *params
       options = params.last || {}
       options.reverse_merge! :force => false
 
+      # FIXME: as it is the ! version, this make no sense to have the
+      # :force option here, but I'll keep it for the safe version.
       if options[:force]
         if has_node? u and has_node? v
           if terminal? u and terminal? v
@@ -121,15 +174,24 @@ module Evergreen
       end
     end
 
+    # The nodes of the tree in a 1D array.
+    #
+    # @returns [Array(node)]
     def nodes
       vertices
     end
 
+    # The terminal nodes of the tree in a 1D array.
+    #
+    # @return [Array(node)] only terminal nodes
     def terminal_nodes
       nodes.inject(0) { |num, node| num += 1 if terminal?(node)}
     end
     alias boundaries terminal_nodes
 
+    # The branches of the tree in a 1D array.
+    #
+    # @return [Array(Branch)]
     def branches
       edges
     end
@@ -152,6 +214,9 @@ module Evergreen
       acyclic? and connected? and not directed?
     end
 
+    # Is the node a terminal node?
+    #
+    # @return [Boolean]
     def terminal? u
       if has_node? u
         nodes == [u] ? true : (degree(u) == 1)

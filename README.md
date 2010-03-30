@@ -16,9 +16,9 @@ Trees are just simple graphs, with specific constraints on edges (branches) and 
 
 * undirected: the branches of a tree have no direction;
 * acyclic: a cycle is defined as a path such that the starting node and the ending node are the same. Such paths are forbidden in a tree;
-* connected: a tree is such that pair of distinct nodes can be connected through some path (not a cycle)
+* connected: a tree is such that pair of distinct nodes can be connected through some path (not a cycle).
 
-This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and leave. That's what you'd want to use to modelize nested directories, for instance. Such a structure has additional constraints, and is derived from the more generalist tree*-as-in-graph-theory* structure under the name arborescence.
+This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and leaves. That's what you'd want to use to modelize nested directories, for instance. Such a structure has additional constraints, and is derived from the more generalist tree*-as-in-graph-theory* structure under the name arborescence.
 
 Therefore it seems to make sense to implements those structure using a graph backend. Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), using it as its backend. The library will hence be quite minimal: just another implementation of the `Graphy::UndirectdGraph` with appropriate constraints, packaged in a nice tree-oriented DSL (let's talk about nodes, leaves, children, branching and so on).
 
