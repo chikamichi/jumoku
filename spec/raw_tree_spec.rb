@@ -290,16 +290,16 @@ describe "RawTreeBuilder" do
     describe "a tree with n nodes" do
       before :each do
         # TODO: DRY this as random_tree(n = 10)
-        @n = rand(100) # number of nodes
+        @n = rand(50) # number of nodes
         @tree.add_node! @n
         @old_node = @n
 
-        (@n-1).times do
+        (@n - 1).times do
           begin
             @new_node = rand(100)
             @tree.add_node!(@new_node, @old_node)
           rescue RawTreeError
-            retry # cycle!
+            retry # cycle detected!
           end
           @old_node = @new_node
         end

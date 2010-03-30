@@ -19,7 +19,9 @@ module Evergreen
   autoload :TreeAPI,                     'evergreen/tree_api'
   autoload :RawTreeBuilder,              'evergreen/raw_tree'
 
-  autoload :TreeBuilder,                 'evergreen/builders/tree'
+  #autoload :TreeBuilder,                 'evergreen/builders/tree'
+
+  autoload :RawTree,                     'evergreen/classes/tree_classes'
 
   autoload :Branch,                      'evergreen/branch.rb'
   
