@@ -18,15 +18,15 @@ Trees are just simple graphs, with specific constraints on edges (branches) and 
 * acyclic: a cycle is defined as a path such that the starting node and the ending node are the same. Such paths are forbidden in a tree;
 * connected: a tree is such that pair of distinct nodes can be connected through some path (not a cycle).
 
-This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and leaves. That's what you'd want to use to modelize nested directories, for instance. Such a structure has additional constraints, and is derived from the more generalist tree*-as-in-graph-theory* structure under the name arborescence.
+This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and some leaves. That's what you would use to use to modelize nested directories, for instance. Such a structure has additional constraints, and it makes sense to derive it from the more generalist tree*-as-in-graph-theory* structure, under the name "arborescence".
 
-Therefore it seems to make sense to implements those structure using a graph backend. Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"), using it as its backend. The library will hence be quite minimal: just another implementation of the `Graphy::UndirectdGraph` with appropriate constraints, packaged in a nice tree-oriented DSL (let's talk about nodes, leaves, children, branching and so on).
+Therefore, it is easy to implement those structures using graphs. Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"). The library will hence be quite minimal: just another implementation of the `Graphy::UndirectdGraph` with appropriate constraints, packaged in a nice tree-oriented DSL (let's talk about nodes, leaves, children, branching and so on).
 
 ## Examples -- updated as the library evolves
 
-What we really want is the simplest DSL possible.
+What we really want is the *simplest DSL possible*.
 
-For the moment, only one tree flavour is available: the raw tree, that is the simplest tree matching the standard graph theory definition.
+For the moment, only one tree flavour is available: the *raw* tree, that is the simplest tree structure matching the standard graph theory definition.
 
 To create an instance of such a tree, you may use inheritance/direct initialization:
 
@@ -42,8 +42,9 @@ or mix-in a module "builder":
 
 Actually the RawTree class is nothing but the mixin code snippet above.
 
-`tree` is now a raw tree object shipping with defaults options:
+`tree` is now a raw tree object shipping with some default options:
 
+* it is a valid tree as defined above, and it ensures it will remain so
 * no constraint for the branching number
 * it is a undirected tree which operators ensure it remains acyclic and connected
 

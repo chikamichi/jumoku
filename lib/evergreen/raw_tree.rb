@@ -176,7 +176,7 @@ module Evergreen
 
     # The nodes of the tree in a 1D array.
     #
-    # @returns [Array(node)]
+    # @return [Array(node)]
     def nodes
       vertices
     end

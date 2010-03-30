@@ -4,13 +4,13 @@ module Evergreen
   #
   # Each implementation module must implement the following routines:
   #
-  #   * add_node!(n, l = nil)            Add a node to the tree and return the tree. `l` is an optional label.
-  #   * add_branch!(p, c = nil, l = nil) Add a branch to the tree and return the tree. `p` can be an {Branch}, or `p,c` a {Branch} pair. The last parameter `l` is an optional label.
-  #   * remove_node!(n)              Remove a vertex to the graph and return the tree.
-  #   * remove_branch!(p, c = nil)       Remove an edge from the graph and return the tree.
-  #   * nodes                       Returns an array of all nodes.
-  #   * leaves                      Returns an array of all leaves.
-  #   * branches                          Returns an array of all branches.
+  # * add_node!(n, l = nil) — adds a node to the tree and return the tree; l is an optional label (see Graphy library).
+  # * add_branch!(i, j = nil, l = nil) — adds a branch to the tree and return the tree. i can be a {Branch}, or (i,j) a node pair; l is an optional label.
+  # * remove_node!(n) — removes a node from the tree and return the tree.
+  # * remove_branch!(i, j = nil) — removes an edge from the graph and return the tree. i can be a {Branch}, or (i,j) a node pair.
+  # * nodes — returns an array of all nodes.
+  # * terminal_nodes — returns an array of all terminal nodes.
+  # * branches — returns an array of all branches.
   module TreeAPI
 
     # @raise if the API is not completely implemented
