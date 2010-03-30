@@ -1,100 +1,164 @@
 module Evergreen
-  module RawTree
-    extend self
-    include Node
+  # This module provides the basic routines needed to implement the specialized builders:
+  # {TreeBuilder}, {BinaryTreeBuilder}, … each of them streamlining {RawTreeBuilder}'s
+  # behavior. Those implementations are under the control of the {TreeAPI}.
+  #
+  # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
+  # connected, acyclic graphs. Using {Graphy::UndirectedGraphBuilder} as its backends, 
+  # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
+  # acyclic).
+  #
+  # This builder defines a few methods not required by the API so as to maintain consistency
+  # in the DSL (for instance, aliasing `*vertex` to `*node`, etc.)
+  module RawTreeBuilder
+    include Graphy::UndirectedGraphBuilder
 
-    attr_accessor :id
-    attr_accessor :name
-    attr_accessor :data
-    attr_accessor :parent
-
-    # Create a new raw tree.
-    # 
-    # @param [#to_sym] name the name of the root node initializing the tree
+    # This method is called by the specialized implementations
+    # upon tree creation.
     #
-    # @option *options [Symbol] :names_as nodes identification method: as a string
-    #   (`name` must respond to `to_s`), as a symbolized string (`name` must respond
-    #   to `to_sym`) or as a unique random id (base64 strings, 10 characters long).
-    #   With `:strings` and `:symbols` values, nodes names must be unique.
-    # @option *options [Object] :data the data field type to use. Defaults to an empty OpenObject,
-    #   for the root and each tree nodes (can be overriden on a per-node basis as well).
+    # Initialization parameters can include:
     #
-    # @raise [ArgumentError] if the no name is provided
-    # @raise [ArgumentError] if the provided name is not valid given the specified `:names_as` option
-    # @raise [ArgumentError] if invalid any options value is supplied
+    # * an array of branches to add
+    # * one or several trees to copy (will be merged if multiple)
     #
-    # @return [Evergreen::RawTree] the root node of the raw tree
-    def initialize name, *options
-      raise ArgumentError, "a name must be provided for the root node (may be nil)" if name.nil?
+    # @param *params [Hash] the initialization parameters
+    #def implementation_initialize(*params)
+    def initialize(*params)
+      raise ArgumentError if params.any? do |p|
+        # FIXME: checking wether it's a GraphBuilder (module) is not sufficient
+        # and the is_a? redefinition trick (instance_evaling) should be
+        # completed by a clever way to check the actual class of p.
+        # Maybe using ObjectSpace to get the available Graph classes?
+        !(p.is_a? Evergreen::RawTreeBuilder or p.is_a? Array or p.is_a? Hash)
+      end
 
-      options.extract_options!
-             .reverse_merge! :names_as => :strings, :data_as => OpenObject.new
+      args = params.last || {}
 
-      # create the root node/leaf
-      # FIXME: should be a call to insert_new_node(name, parent(TreeNode)=nil, [children(*TreeNode)], [content=OpenObject.new])
-      # which in turns would call
-      # node = Node.create(name, [content]),
-      # self.attach_child(node, parent=nil),
-      # self.children.each { |child| node.attach_child(child) }
-      #
-      # Donc module Evergreen::RawTree::Node avec ses helpers : new, attach_child
-      # attention, si attach_child reçoit parent=nil, il y a deux cas de figures :
-      # - si @nodes.empty? alors un nouvel arbre est créé, avec le node comme root ;
-      # - si !@nodes.empty? (donc il y a une racine), alors une nouvelle "branche morte"
-      #   de l'arbre est créée (il y a un store @dead_branches qui liste les racines des
-      #   branches mortes de l'arbre courant).
-      id = generate_new_id
+      class << self
+        self
+      end.module_eval do
+        # Ensure the builder abides by its API requirements.
+        include Evergreen::TreeAPI
+      end
 
-      case options[:names_as]
-      when :strings
-        raise ArgumentError unless name.respond_to? :to_s
-        name = name.to_s
-      when :symbols
-        raise ArgumentError unless name.respond_to? :to_sym
-        name = name.to_sym
-      when :ids
-        name = id
+      super # Delegates to Graphy then.
+    end
+
+    def directed?
+      return false
+    end
+
+    def add_node! u, v = nil
+      if nodes.empty?
+        add_vertex! u
+      elsif u.is_a? Evergreen::Branch
+        add_branch! u
+      elsif not v.nil?
+        add_branch! u, v
       else
-        raise ArgumentError, ":names should match either :strings, :symbols or :ids"
+        # Ensure the connected constraint.
+        raise RawTreeError, "In order to add a node to the tree, you must specify another node to attach to."
+      end
+    end
+
+    # Adds a new branch to the tree.
+    #
+    # As a tree is an undirected structure, the order of the parameter is of
+    # no importance : `add_branch!(u,v) == add_branch!(v,u)`.
+    #
+    # @param
+    def add_branch! u, v = nil
+      if has_node? u and has_node? v
+        unless has_branch? u, v
+          # Ensure the acyclic constraint.
+          raise RawTreeError, "Can't form a cycle within a tree."
+        end
       end
 
-      data = options[:data_as]
-      children = []
-
-      root_node = Node.create(name, data, children)
-      @nodes[self.id] = root_node
-      setAsRoot! # parent= nil
-
-      # create the tree metadata stores
-      @nodes = OpenObject.new
-
-      # add the root node in the stores
-      @nodes[self.id] = self
-
-      if block_given?
-        # you may write tree = Evergreen::RawTree.new "my tree" { |data, children| # work with the default data }
-        yield @nodes[self.id].data, @nodes[self.id].children
+      if u.is_a? Evergreen::Branch
+        v = u.target
+        u = u.source
       end
 
-      return @nodes[self.id]
-    end
-
-    def parent= parent
-      @parent = parent
-    end
-
-    def new_child child
-      raise ArgumentError, "Children already added" if options[:unique_child] and @children.inc
-    end
-
-    def generate_new_id
-      id = nil
-
-      while(id.nil? or not @nodes[id].nil?) do
-        id = SecureRandom.base64(10)
+      if has_node? u or has_node? v or nodes.empty?
+        add_edge! u, v
+      else
+        # Ensure the connected constraint.
+        raise RawTreeError, "Can't add a dead branch to a tree."
       end
-
-      return id
     end
+
+    def remove_node! u
+      if terminal? u
+        remove_vertex! u
+      else
+        # Ensure the connected constraint.
+        raise RawTreeError, "Can't remove a non terminal node in a tree"
+      end
+    end
+
+    def remove_branch! u, v = nil, *params
+      options = params.last || {}
+      options.reverse_merge! :force => false
+
+      if options[:force]
+        if has_node? u and has_node? v
+          if terminal? u and terminal? v
+            remove_edge! u, v
+          elsif terminal? u and not terminal? v
+            remove_node! u
+          elsif terminal? v and not terminal? u
+            remove_node! v
+          else
+            raise RawTreeError, "Can't remove a non terminal branch in a tree"
+          end
+        else
+          raise RawTreeError, "Can't remove a branch which does not exist"
+        end
+      else
+        # Ensure some safety somehow.
+        raise RawTreeError, "Can't remove a branch from a tree without being forced to (option :force)"
+      end
+    end
+
+    def nodes
+      vertices
+    end
+
+    def terminal_nodes
+      nodes.inject(0) { |num, node| num += 1 if terminal?(node)}
+    end
+    alias boundaries terminal_nodes
+
+    def branches
+      edges
+    end
+
+    # Aliasing.
+    alias has_node? has_vertex?
+    alias has_branch? has_edge?
+
+    # Tree helpers.
+
+    # Checks whether the tree is *really* a valid tree, that is if the
+    # following conditions are fulfilled:
+    #
+    # * undirected
+    # * acyclic
+    # * connected
+    #
+    # @return [Boolean]
+    def valid?
+      acyclic? and connected? and not directed?
+    end
+
+    def terminal? u
+      if has_node? u
+        nodes == [u] ? true : (degree(u) == 1)
+      else
+        raise RawTreeNodeError, "Not a node of this tree."
+      end
+    end
+    alias has_terminal_node? terminal?
   end
 end

@@ -44,7 +44,7 @@ What if we want to customize it a bit?
       conf.direction = :bottom_up   # default is :top_down
     end
 
-Then, we can think about implementing specialized trees (binaries, AVL, Red-Black...) and the appropriate set of search/traversal algorithms if needed.
+Then, we can think about implementing specialized trees (binaries, AVL, Red-Black... [and much more](http://en.wikipedia.org/wiki/List_of_graph_theory_topics#Trees)) and the appropriate set of search/traversal algorithms if needed.
 
 ## Notes
 
