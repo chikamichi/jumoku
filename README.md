@@ -58,7 +58,7 @@ What if we want to customize it a bit?
 
 Then, we can think about implementing specialized trees (arborescence, binary trees, AVL, Red-Black... [and much more](http://en.wikipedia.org/wiki/List_of_graph_theory_topics#Trees)) and the appropriate set of search/traversal algorithms if needed.
 
-## Install and notes
+## Install, first steps and notes
 
 One issue with Graphy, as with any other graph lib outthere, is that it provides classes, not modules. I forked Graphy and switch from a class-based implementation to a module-based one (adding a class layer btw, so the public API remains the same). Hence both behaviors are provided: mixin and subclassing. evergreen can in turn provides the same flexibility.
 
@@ -72,5 +72,22 @@ In order to play with Evergreen, you must:
     cd evergreen
     rake install
 
-Take a look at the tests in `spec/` to learn more about the current implementation.
+Now you can play in IRB:
+
+    $ irb
+    ruby-1.9.1-p378 > require 'evergreen'
+    => true 
+    ruby-1.9.1-p378 > include Evergreen # so you won't have to prefix everything with Evergreen::
+    => Object 
+    ruby-1.9.1-p378 > t = RawTree.new
+    => #<Evergreen::RawTree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set> 
+    ruby-1.9.1-p378 > t.methods
+    => # lot of stuff hopefully :)
+
+Best way to start: read the doc. You can generate the YARDoc with both commands (need to install the `yard` gem if you have not yet):
+
+    rake yard
+    yardoc
+
+Take a look at the tests in `spec/` as well.
 
