@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jean-Denis Vauguet"]
-  s.date = %q{2010-03-30}
+  s.date = %q{2010-03-31}
   s.description = %q{Evergreen provides you with tree behaviors to mixin and tree classes to inherit from. Raw tree, common binary trees, custom trees...}
   s.email = %q{jd@vauguet.fr}
   s.extra_rdoc_files = [
@@ -19,17 +19,21 @@ Gem::Specification.new do |s|
   s.files = [
     "LICENSE",
      "README.md",
+     "Rakefile",
      "VERSION",
+     "evergreen.gemspec",
      "lib/evergreen.rb",
-     "lib/evergreen/branch.rb",
+     "lib/evergreen/builders/raw_tree.rb",
+     "lib/evergreen/builders/tree.rb",
      "lib/evergreen/classes/tree_classes.rb",
-     "lib/evergreen/raw_tree.rb",
      "lib/evergreen/raw_tree_node.rb",
-     "lib/evergreen/support.rb",
+     "lib/evergreen/support/branch.rb",
+     "lib/evergreen/support/support.rb",
      "lib/evergreen/tree_api.rb",
      "spec/raw_tree_spec.rb",
      "spec/spec.opts",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/tree_spec.rb"
   ]
   s.homepage = %q{http://github.com/chikamichi/evergreen}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -38,7 +42,8 @@ Gem::Specification.new do |s|
   s.summary = %q{A fully fledged tree library for Ruby.}
   s.test_files = [
     "spec/raw_tree_spec.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/tree_spec.rb"
   ]
 
   if s.respond_to? :specification_version then

@@ -4,18 +4,18 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 # is a valid tree as far as Graph Theory is concerned:
 # a tree is an undirected, connected, acyclic graph. 
 #
-# Note: these tests make use of the "root"/"children" terminology.
+# Note: these tests may make use of the "root"/"children" terminology.
 # Be aware this has got *no* structural meaning as a tree is, by
 # definition, undirected. Those terms are used only to simplify
 # nodes creation within the tests, so I recall who branched who.
 # For tests about rooted tree, see arborescence_spec.rb
 describe "RawTreeBuilder" do
   before :each do
-    class MyTree
-      include RawTreeBuilder
-    end
+    #class MyTree
+      #include RawTreeBuilder
+    #end
 
-    @tree = MyTree.new
+    @tree = RawTree.new
   end
 
   describe "#new" do
@@ -23,6 +23,8 @@ describe "RawTreeBuilder" do
       @tree.should_not be_directed
       @tree.should be_acyclic
       @tree.should be_connected
+      # aka @tree.should be_valid, 'll use that from now own
+
       @tree.nodes.should be_empty
     end
   end
@@ -148,10 +150,10 @@ describe "RawTreeBuilder" do
 
     describe "a tree that is one sole branch (two nodes)" do
       before :each do
-        @tree1 = MyTree.new
+        @tree1 = RawTree.new
         @tree1.add_node! 1
         @tree1.add_node! 2, 1
-        @tree2 = MyTree.new
+        @tree2 = RawTree.new
         @tree2.add_node! 1
         @tree2.add_node! 2, 1
       end
@@ -246,6 +248,26 @@ describe "RawTreeBuilder" do
     end
   end
 
+  describe "#nodes" do
+    describe "an empty tree" do
+      it "should not have any node" do
+        @tree.nodes.should be_empty
+      end
+    end
+
+    describe "a tree with some node" do
+      it "should be aware of its node(s)" do
+        @tree.add_node! :solo
+        @tree.nodes.should == [:solo]
+        
+        @tree.add_branch! 2, :solo
+        @tree.add_branch! 2, 3
+        @tree.nodes.should == [:solo, 2, 3]
+        @tree.should be_valid
+      end
+    end
+  end
+
   describe "#terminal_nodes" do
     describe "an empty tree" do
       it "should have no terminal nodes" do
@@ -312,4 +334,6 @@ describe "RawTreeBuilder" do
       end
     end
   end
+
+  # TODO: add a final test which sums it up
 end

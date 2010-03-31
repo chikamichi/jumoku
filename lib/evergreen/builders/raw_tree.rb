@@ -4,17 +4,21 @@ module Evergreen
   # behavior. Those implementations are under the control of the {TreeAPI}.
   #
   # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
-  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backends, 
+  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backend, 
   # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
-  # acyclic).
+  # acyclic). {RawTreeBuilder RawTree} offers limited functionalities, therefore the main
+  # tree structure you'll likely to use is its extended version, {TreeBuilder Tree}. A
+  # {Tree} share the same behavior but is a fully-fledged object with user-friendly public
+  # methods built upon {RawTree}'s internals.
   #
   # Note that a node can be any Object. There is no "node type", therefore arguments which
   # are expected to be nodes are simply labelled as "`node`". A nice object type to us as
-  # a node would be an OpenStruct or an OpenObject (from the Facets library), as it makes
-  # nodes versatile handlers.
+  # a node would be an OpenStruct or an
+  # [OpenObject](http://facets.rubyforge.org/apidoc/api/more/classes/OpenObject.html)
+  # (from the Facets library), as it turns nodes into versatile handlers.
   #
   # This builder defines a few methods not required by the API so as to maintain consistency
-  # in the DSL (for instance, aliasing `*vertex` to `*node`, etc.)
+  # in the DSL.
   module RawTreeBuilder
     include Graphy::UndirectedGraphBuilder
 
@@ -28,34 +32,23 @@ module Evergreen
     #
     # @param *params [Hash] the initialization parameters
     # @return [RawTree]
-    #def implementation_initialize(*params)
     def initialize(*params)
-      raise ArgumentError if params.any? do |p|
-        # FIXME: checking wether it's a GraphBuilder (module) is not sufficient
-        # and the is_a? redefinition trick (instance_evaling) should be
-        # completed by a clever way to check the actual class of p.
-        # Maybe using ObjectSpace to get the available Graph classes?
-        !(p.is_a? Evergreen::RawTreeBuilder or p.is_a? Array or p.is_a? Hash)
-      end
-
-      args = params.last || {}
-
       class << self
         self
       end.module_eval do
         # Ensure the builder abides by its API requirements.
         include Evergreen::TreeAPI
       end
-
-      super # Delegates to Graphy then.
+      super(*params) # Delegates to Graphy.
     end
 
-    # By definition, a tree is undirected.
+    # Ensure trees are seen as undirected graphs.
     #
     # @return [Boolean] false
     def directed?
       return false
     end
+    # FIXME: should be able to reach Graphy's method ?!
 
     # Adds the node to the tree.
     #

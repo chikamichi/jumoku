@@ -17,15 +17,13 @@ require 'graphy'
 module Evergreen
   # evergreen internals: graph builders and additionnal behaviors
   autoload :TreeAPI,                     'evergreen/tree_api'
-  autoload :RawTreeBuilder,              'evergreen/raw_tree'
-
-  #autoload :TreeBuilder,                 'evergreen/builders/tree'
+  autoload :RawTreeBuilder,              'evergreen/builders/raw_tree'
+  autoload :TreeBuilder,                 'evergreen/builders/tree'
 
   autoload :RawTree,                     'evergreen/classes/tree_classes'
 
-  autoload :Branch,                      'evergreen/branch.rb'
+  autoload :Branch,                      'evergreen/support/branch'
   
   # support and extensions
-  require 'evergreen/support'
-  require 'ext/ext'
+  require 'evergreen/support/support'
 end
