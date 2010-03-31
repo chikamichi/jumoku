@@ -231,16 +231,11 @@ describe "RawTreeBuilder" do
         @tree.add_branch! :i1, :t8
       end
 
-      it "should not allow for branch deletion by default" do
-        lambda { @tree.remove_branch! :i1, :t8 }.should raise_error RawTreeError
-      end
-
-      it "should allow for terminal branch deletion, only when forced to (triggers terminal node deletion)" do
+      it "should allow for terminal branch deletion (triggers terminal node deletion)" do
+        @tree.nodes.size.should == 8
         lambda { @tree.remove_branch! :i1, :i2 }.should raise_error RawTreeError
         @tree.nodes.size.should == 8
-        lambda { @tree.remove_branch! :i1, :i2, :force => true }.should raise_error RawTreeError
-        @tree.nodes.size.should == 8
-        lambda { @tree.remove_branch! :i1, :t8, :force => true }.should_not raise_error RawTreeError
+        lambda { @tree.remove_branch! :i1, :t8 }.should_not raise_error RawTreeError
         @tree.nodes.should_not include :t8
         @tree.has_branch?(:i1, :t8).should be_false
         @tree.should be_valid

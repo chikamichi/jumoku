@@ -1,10 +1,31 @@
 module Evergreen
   # This builder extends the cheap implementation {RawTreeBuilder}, which
-  # purpose was to implement the {TreeAPI}. {TreeBuilder} provides extended
+  # purpose is to implement the {TreeAPI}. {TreeBuilder} provides extended
   # functionalities and acts as the main tree structure you may use, either
-  # by mixing-in this module or by inheritance of the {Tree} class.
+  # by mixing-in this module or by inheritance of the associated {Tree} class.
+  #
+  #     tree = Tree.new
+  #
+  #     # or
+  #
+  #     class MyTree < Tree
+  #       # your stuff
+  #     end
+  #     tree = MyTree.new
+  #
+  #     # or
+  #
+  #     class MyTree
+  #       include TreeBuilder
+  #       # your stuff
+  #     end
+  #     tree = MyTree.new
   module TreeBuilder
     include RawTreeBuilder
+
+    def initialize(*params)
+      super(*params)
+    end
    
     # Non destructive version of {RawTreeBuilder#add_node!} (works on a copy of the tree).
     #
@@ -38,27 +59,60 @@ module Evergreen
 
     # Non destructive version {RawTreeBuilder#remove_branch!} (works on a copy of the tree).
     #
+    # You cannot remove non terminal branches as it would break
+    # the connectivity constraint of the tree.
+    #
     # @param [node] u
     # @param [node] v
-    # @return [tree] a new tree without the specified branch
-    def remove_branch(u, v = nil)
-      x = self.class.new(self)
-      x.remove_branch!(u, v)
+    # @return [Tree] a new tree without the specified branch
+    def remove_branch(u, v = nil, *params)
+      options = params.last || {}
+      options.reverse_merge! :force => false
+
+      if options[:force]
+        x = self.class.new(self)
+        x.remove_branch!(u, v)
+      else
+        # Ensure some safety somehow.
+        raise RawTreeError, "Can't remove a branch from a tree without being forced to (option :force)."
+      end
     end
     
     # Adds all specified nodes to the node set.
     #
+    # The nodes defines implicit branches, that is it is mandatory to provide
+    # an odd number of connected nodes which does not form a cycle.
+    #
+    # Valid usage:
+    # 
+    #     tree = Tree.new                # an empty tree
+    #     tree.add_nodes!(1,2, 2,3, 3,4) # tree.nodes => [1, 2, 3, 4]
+    #
+    # Invalid usages:
+    #
+    #     tree = Tree.new                # an empty tree
+    #     tree.add_nodes!(1, 2, 3)       # even number of nodes
+    #     tree.add_nodes!(1,2, 2,3, 3,1) # cycle
+    #     tree.add_nodes!(1,2, 4,5)      # not connected
+    #
     # @param [#each] *a an Enumerable nodes set
-    # @return [tree] `self`
+    # @return [Tree] `self`
     def add_nodes!(*a)
-      a.each { |v| add_node! v }
+      #a.each { |v| add_node! v }
+      begin
+        a.explode_in_pairs.each do |pair|
+          add_branch! pair[0], pair[1]
+        end
+      rescue Exception
+        raise RawTreeError, "Adding those nodes would break the tree structure."
+      end
       self
     end
 
     # Same as {TreeBuilder#add_nodes! add_nodes!} but works on copy of the receiver.
     #
     # @param [#each] *a
-    # @return [tree] a modified copy of `self`
+    # @return [Tree] a modified copy of `self`
     def add_nodes(*a)
       x = self.class.new(self)
       x.add_nodes(*a)
@@ -71,7 +125,7 @@ module Evergreen
     # {Branch}.
     #
     # @param [#each] *a an Enumerable branches set
-    # @return [tree] `self`
+    # @return [Tree] `self`
     def add_branches!(*a)
       a.each { |branch| add_branch!(branch) }
       self
@@ -80,7 +134,7 @@ module Evergreen
     # Same as {TreeBuilder#add_branches! add_branches!} but works on a copy of the receiver.
     #
     # @param [#each] *a an Enumerable branches set
-    # @return [tree] a modified copy of `self`
+    # @return [Tree] a modified copy of `self`
     def add_branches(*a)
       x = self.class.new(self)
       x.add_branches!(*a)
@@ -92,7 +146,7 @@ module Evergreen
     # The process relies on {RawTreeBuilder#remove_node! remove_node!}.
     #
     # @param [#each] *a an Enumerable nodes set
-    # @return [tree] `self`
+    # @return [Tree] `self`
     def remove_nodes!(*a)
       a.each { |v| remove_node! v }
     end
@@ -101,7 +155,7 @@ module Evergreen
     # Same as {RawTreeBuilder#remove_nodes! remove_nodes!} but works on a copy of the receiver.
     #
     # @param [#each] *a a node Enumerable set
-    # @return [tree] a modified copy of `self`
+    # @return [Tree] a modified copy of `self`
     def remove_nodes(*a)
       x = self.class.new(self)
       x.remove_nodes(*a)
@@ -113,7 +167,7 @@ module Evergreen
     # The process relies on {RawTreeBuilder#remove_branches! remove_branches!}.
     #
     # @param [#each] *a an Enumerable branches set
-    # @return [tree] `self`
+    # @return [Tree] `self`
     def remove_branches!(*a)
       # FIXME: isn't that broken (infinite loop)?
       puts "test"
@@ -124,7 +178,7 @@ module Evergreen
     # Same as {TreeBuilder#remove_branches! remove_branches!} but works on a copy of the receiver.
     #
     # @param [#each] *a an Enumerable branches set
-    # @return [tree] a modified copy of `self`
+    # @return [Tree] a modified copy of `self`
     def remove_branches(*a)
       x = self.class.new(self)
       x.remove_branches!(*a)

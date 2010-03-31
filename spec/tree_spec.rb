@@ -29,9 +29,134 @@ describe "TreeBuilder" do
 
   describe "#add_node" do
     describe "an empty tree" do
-      it "should create new, valid trees when new nodes are added" do
+      it "should create a new, valid tree with a single node when its first node is added" do
         @tree.add_node 1
         @tree.should be_empty
+
+        new_tree = @tree.add_node 1
+        new_tree.nodes.should == [1]
+        new_tree.should be_valid
+      end
+    end
+
+    describe "a populated tree" do
+      before :each do
+        @tree.add_branch! 1, 2
+        @tree.add_branch! 2, 3
+        @tree.add_branch! 3, 4
+      end
+
+      it "should create a new, extended, valid tree when an additionnal node is added" do
+        @tree.add_node 5, 4
+        @tree.add_node 3, 6
+        @tree.nodes.size.should == 4
+        
+        new_tree = @tree.add_node 5, 4
+        new_tree.nodes.size.should == @tree.nodes.size + 1
+        new_tree.nodes.should == [1, 2, 3, 4, 5]
+        new_tree.should be_valid
+      end
+    end
+  end
+
+  describe "#add_branch" do
+    describe "an empty tree" do
+      it "should create a new, valid tree with only two nodes when a branch is added" do
+        new_tree = @tree.add_branch :one, :two
+        @tree.nodes.should be_empty
+        @tree.should be_valid
+        new_tree.nodes.should == [:one, :two]
+        new_tree.should be_valid
+      end
+    end
+
+    describe "a populate" do
+      before :each do
+        @tree.add_branch! 1, 2
+        @tree.add_branch! 2, 3
+        @tree.add_branch! 3, 4
+      end
+
+      it "should create a new, extended, valid tree when a branch is added" do
+        @tree.add_branch 5, 4
+        @tree.add_branch 3, 6
+        @tree.nodes.size.should == 4
+
+        new_tree = @tree.add_branch 5, 4
+        new_tree.nodes.size.should == @tree.nodes.size + 1
+        new_tree.nodes.should == [1, 2, 3, 4, 5]
+        new_tree.should be_valid
+      end
+    end
+  end
+
+  describe "#remove_node" do
+    describe "an empty tree" do
+      it "should raise an error when trying to remove a node" do
+        lambda { @tree.remove_node :null }.should raise_error, RawTreeError
+      end
+    end
+
+    describe "a tree that's one node only" do
+      before :each do
+        @tree.add_node! 1
+      end
+
+      it "should create a new, empty, valid tree" do
+        new_tree = @tree.remove_node 1
+        @tree.nodes.should == [1]
+        @tree.should be_valid
+        new_tree.nodes.should be_empty
+        new_tree.should be_valid
+      end
+    end
+  end
+
+  describe "#remove_branch" do
+    describe "an empty tree" do
+      it "should not allow for removing a branch, even if forced to" do
+        lambda { @tree.remove_branch 1, 2 }.should raise_error, RawTreeError
+        lambda { @tree.remove_branch 1, 2, :force => true }.should raise_error, RawTreeError
+      end
+    end
+
+    describe "a tree that's one node, even if forced to" do
+      before :each do
+        @tree.add_node! 1
+      end
+
+      it "should not allow for removing a branch" do
+        lambda { @tree.remove_branch 1, 2 }.should raise_error, RawTreeError
+        lambda { @tree.remove_branch 1, 2, :force => true }.should raise_error, RawTreeError
+      end
+    end
+
+    describe "a tree with at least two nodes" do
+      before :each do
+        @tree.add_branch! 1, 2
+        @tree.add_branch! 2, 3
+      end
+
+      it "should not allow for removing a branch" do
+        lambda { @tree.remove_branch 1, 2 }.should raise_error, RawTreeError,
+      end
+
+      it "should allow for removing a branch if forced to, creating a new tree" do
+        lambda { @tree.remove_branch 1, 2, :force => true }.should_not raise_error
+        new_tree = @tree.remove_branch 1, 2, :force => true
+        @tree.nodes.should == [1, 2, 3]
+        new_tree.nodes.should == [2, 3]
+        new_tree.should be_valid
+      end
+    end
+  end
+
+  describe "#add_nodes!" do
+    describe "an empty tree" do
+      it "should allow for adding its first nodes, by pairs and branches" do
+        @tree.add_nodes! 1,2, 3,4, 5,6
+        @tree.nodes.should == [1, 2, 3, 4, 5, 6]
+        @tree.should be_valid
       end
     end
   end

@@ -78,17 +78,17 @@ Now you can play in IRB:
     $ irb
     ruby-1.9.1-p378 > require 'evergreen'
     => true 
-    ruby-1.9.1-p378 > include Evergreen # so you won't have to prefix everything with Evergreen::
+    ruby-1.9.1-p378 > include Evergreen # so you won't have to prefix everything with "Evergreen::"
     => Object 
     ruby-1.9.1-p378 > t = RawTree.new
     => #<Evergreen::RawTree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set> 
     ruby-1.9.1-p378 > t.methods
     => # lot of stuff hopefully :)
 
-Best way to start: read the doc. You can generate the YARDoc with both commands (need to install the `yard` gem if you have not yet):
+Best way to start: [read the doc](http://rdoc.info/projects/chikamichi/evergreen "Evergreen on rdoc.info"). You can locally generate the YARDoc with either commands (need to install the `yard` gem if you have not yet):
 
     rake yard
     yardoc
 
-Take a look at the tests in `spec/` as well.
+Be sure to take a look at the tests in `spec/` as well, as it documents the public API extensively.
 

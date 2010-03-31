@@ -85,7 +85,7 @@ module Evergreen
     # @overload add_branch!(b)
     #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [RawTree] self
-    def add_branch! u, v = nil
+    def add_branch! u, v = nil, l = nil
       if has_node? u and has_node? v
         unless has_branch? u, v
           # Ensure the acyclic constraint.
@@ -99,7 +99,7 @@ module Evergreen
       end
 
       if has_node? u or has_node? v or nodes.empty?
-        add_edge! u, v
+        add_edge! u, v, l
       else
         # Ensure the connected constraint.
         raise RawTreeError, "Can't add a dead branch to a tree."
@@ -141,31 +141,25 @@ module Evergreen
     # @overload remove_branch!(b)
     #   @param [Branch] b
     # @return [RawTree] self
-    def remove_branch! u, v = nil, *params
-      options = params.last || {}
-      options.reverse_merge! :force => false
-
-      # FIXME: as it is the ! version, this make no sense to have the
-      # :force option here, but I'll keep it for the safe version.
-      if options[:force]
-        if has_node? u and has_node? v
-          if terminal? u and terminal? v
-            remove_edge! u, v
-          elsif terminal? u and not terminal? v
-            remove_node! u
-          elsif terminal? v and not terminal? u
-            remove_node! v
-          else
-            raise RawTreeError, "Can't remove a non terminal branch in a tree"
-          end
+    def remove_branch! u, v = nil
+      if has_node? u and has_node? v
+        if terminal? u and terminal? v
+          remove_edge! u, v
+        elsif terminal? u and not terminal? v
+          remove_node! u
+        elsif terminal? v and not terminal? u
+          remove_node! v
         else
-          raise RawTreeError, "Can't remove a branch which does not exist"
+          raise RawTreeError, "Can't remove a non terminal branch in a tree"
         end
       else
-        # Ensure some safety somehow.
-        raise RawTreeError, "Can't remove a branch from a tree without being forced to (option :force)"
+        raise RawTreeError, "Can't remove a branch which does not exist"
       end
     end
+    # TODO: add an option to force nodes deletion upon branch deletion
+    # (:and_nodes => true) ; called by a wrapping method
+    # remove_branch_and_nodes, alias break_branch
+    # (and their ! roomates).
 
     # The nodes of the tree in a 1D array.
     #
