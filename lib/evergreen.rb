@@ -11,6 +11,8 @@ require 'active_support'
 
 require 'facets/openobject'
 require 'facets/hash'
+require 'facets/array'
+require 'facets/enumerable'
 
 require 'graphy'
 
@@ -21,9 +23,12 @@ module Evergreen
   autoload :TreeBuilder,                 'evergreen/builders/tree'
 
   autoload :RawTree,                     'evergreen/classes/tree_classes'
+  autoload :Tree,                        'evergreen/classes/tree_classes'
 
   autoload :Branch,                      'evergreen/support/branch'
   
   # support and extensions
   require 'evergreen/support/support'
+  # extensions to ruby core
+  require 'evergreen/ext/ext'
 end

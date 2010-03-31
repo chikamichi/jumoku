@@ -154,9 +154,20 @@ describe "TreeBuilder" do
   describe "#add_nodes!" do
     describe "an empty tree" do
       it "should allow for adding its first nodes, by pairs and branches" do
-        @tree.add_nodes! 1,2, 3,4, 5,6
-        @tree.nodes.should == [1, 2, 3, 4, 5, 6]
+        @tree.add_nodes! 1,2, 2,3, 3,4
+        @tree.nodes.should == [1, 2, 3, 4]
         @tree.should be_valid
+
+        @tree.add_nodes! Branch.new(5, 2)
+        @tree.nodes.should == [1, 2, 3, 4, 5]
+        @tree.should be_valid
+
+        @tree.add_nodes! 3,4, 1,10, Branch.new(10, 11), -1,1
+        @tree.nodes.size.should == 8
+        @tree.should be_valid
+
+        lambda { @tree.add_nodes! 10, 11 }.should_not raise_error
+        lambda { @tree.add_nodes! 1,  11 }.should     raise_error, RawTreeError
       end
     end
   end

@@ -99,11 +99,22 @@ module Evergreen
     # @return [Tree] `self`
     def add_nodes!(*a)
       #a.each { |v| add_node! v }
+      
+      # let's expand the branches first
+      tmp = a.dup
+      branches_positions = tmp.map_send(:"is_a?", Evergreen::Branch).map_with_index { |e,i| i if e == true }.compact
+      branches_positions.each do |pos|
+        branch = a.delete_at pos
+        a.insert pos,   branch.source
+        a.insert pos+1, branch.target
+      end
+
       begin
-        a.explode_in_pairs.each do |pair|
+        a.each_nodes_pair do |pair|
           add_branch! pair[0], pair[1]
         end
       rescue Exception
+        # FIXME: well maybe it should not raise and let add_branch! do the checks?
         raise RawTreeError, "Adding those nodes would break the tree structure."
       end
       self
@@ -208,7 +219,7 @@ module Evergreen
     #   @param [node] v
     # @return [Boolean]
     def branch?(*args)
-      branches.include?(branch_convert(*args))
+      branches.include?(edge_convert(*args))
     end  
     alias has_branch? branch?
     
