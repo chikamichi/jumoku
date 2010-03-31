@@ -1,7 +1,8 @@
 module Evergreen
-  # This builder is built upon the cheap implementation {RawTreeBuilder}, which
+  # This builder extends the cheap implementation {RawTreeBuilder}, which
   # purpose was to implement the {TreeAPI}. {TreeBuilder} provides extended
-  # functionalities and acts as the main tree structure you may use.
+  # functionalities and acts as the main tree structure you may use, either
+  # by mixing-in this module or by inheritance of the {Tree} class.
   module TreeBuilder
     include RawTreeBuilder
    
