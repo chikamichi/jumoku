@@ -106,9 +106,19 @@ module Evergreen
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] `self`
     def add_nodes!(*a)
-      a.flatten.expand_branches!.each_nodes_pair { |pair| add_branch! pair[0], pair[1] }
+      a = a.flatten.expand_branches!
+      if a.size == 1                                   # This allows for using << to add the root as well,
+        if empty?                                      # so that you may write:
+          add_node! a.only                             # Tree.new << :root << [:root, 1] << [1,2, 2,3, Branch.new(3,4)]...
+        else
+          raise RawTreeError, "Cannot add a node without a neighbour."
+        end
+      else
+        a.expand_branches!.each_nodes_pair { |pair| add_branch! pair[0], pair[1] }
+      end
       self
     end
+    alias << add_nodes!
 
     # Same as {TreeBuilder#add_nodes! add_nodes!} but works on a copy of the receiver.
     #
@@ -130,7 +140,9 @@ module Evergreen
     # @param [Array(nodes)] *a flat array of unique nodes
     # @return [Tree] `self`
     def add_consecutive_nodes!(*a)
-      #raise "Not implemented yet."
+      # FIXME: really this may not be as efficient as it could be.
+      # We may get rid of nodes duplication (no expand_branches!)
+      # and add nodes by pair, shifting one node at a time from the list.
       add_nodes!(a.expand_branches!.create_nodes_pairs_list)
       self
     end

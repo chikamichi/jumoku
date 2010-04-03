@@ -175,7 +175,7 @@ describe "TreeBuilder" do
 
   describe "#add_nodes" do
     describe "an empty tree" do
-      it "should allow for adding its first nodes, by pairs and branches, to a copy" do
+      it "should allow for adding its first nodes, by pairs and branches, creating a new, valid tree" do
         new_tree = @tree.add_nodes 1,2, 2,3, 3,4
         @tree.should be_empty
         new_tree.nodes.should == [1, 2, 3, 4]
