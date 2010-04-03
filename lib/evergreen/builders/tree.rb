@@ -29,9 +29,12 @@ module Evergreen
    
     # Non destructive version of {RawTreeBuilder#add_node!} (works on a copy of the tree).
     #
-    # @param [node] n
-    # @param [Label] l
-    # @return [Tree] a new tree with the supplementary node
+    # @overload add_node!(n)
+    #   @param [node] n
+    # @overload add_node!(b)
+    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    # @return [Tree] a modified copy of `self`
+    # @see RawTreeBuilder#add_node!
     def add_node(n, l = nil)
       x = self.class.new(self)
       x.add_node!(n, l)
@@ -39,10 +42,14 @@ module Evergreen
 
     # Non destructive version {RawTreeBuilder#add_branch!} (works on a copy of the tree).
     #
-    # @param [node] i
-    # @param [node] j
-    # @param [Label] l
-    # @return [Tree] a new tree with the supplementary branch
+    # @overload add_branch!(i, j, l = nil)
+    #   @param [node] i
+    #   @param [node] j
+    #   @param [Label] l
+    # @overload add_branch!(b)
+    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    # @return [Tree] a modified copy of `self`
+    # @see RawTreeBuilder#add_branch!
     def add_branch(i, j = nil, l = nil)
       x = self.class.new(self)
       x.add_branch!(i, j, l)
@@ -51,7 +58,8 @@ module Evergreen
     # Non destructive version of {RawTreeBuilder#remove_node!} (works on a copy of the tree).
     #
     # @param [node] n
-    # @return [Tree] a new tree without the specified node
+    # @return [Tree] a modified copy of `self`
+    # @see RawTreeBuilder#remove_node!
     def remove_node(n)
       x = self.class.new(self)
       x.remove_node!(n)
@@ -59,34 +67,31 @@ module Evergreen
 
     # Non destructive version {RawTreeBuilder#remove_branch!} (works on a copy of the tree).
     #
-    # You cannot remove non terminal branches as it would break
-    # the connectivity constraint of the tree.
+    # You cannot remove non terminal branches as it would break the connectivity constraint
+    # of the tree.
     #
-    # @param [node] u
-    # @param [node] v
-    # @return [Tree] a new tree without the specified branch
-    def remove_branch(u, v = nil, *params)
-      options = params.last || {}
-      options.reverse_merge! :force => false
-
-      if options[:force]
-        x = self.class.new(self)
-        x.remove_branch!(u, v)
-      else
-        # Ensure some safety somehow.
-        raise RawTreeError, "Can't remove a branch from a tree without being forced to (option :force)."
-      end
+    # @param [node] i
+    # @param [node] j
+    # @return [Tree] a modified copy of `self`
+    # @see RawTreeBuilder#remove_branch!
+    def remove_branch(i, j = nil, *params)
+      x = self.class.new(self)
+      x.remove_branch!(i, j)
     end
     
     # Adds all specified nodes to the node set.
     #
     # The nodes defines implicit branches, that is it is mandatory to provide
-    # an odd number of connected nodes which does not form a cycle.
+    # an odd number of connected nodes which do not form cycles. You may specify
+    # Branch objects within the list, though.
     #
     # Valid usage:
     # 
     #     tree = Tree.new                # an empty tree
     #     tree.add_nodes!(1,2, 2,3, 3,4) # tree.nodes => [1, 2, 3, 4]
+    #                                    # branches are (1-2), (2-3), (3-4)
+    #     tree.add_nodes!(1,2, 2,3, Branch.new(3,4), 10,1)
+    #     tree.add_nodes! [1,2, 2,3, 3,4]
     #
     # Invalid usages:
     #
@@ -95,39 +100,49 @@ module Evergreen
     #     tree.add_nodes!(1,2, 2,3, 3,1) # cycle
     #     tree.add_nodes!(1,2, 4,5)      # not connected
     #
+    # A helper exist to make it easy to add nodes in a suite.
+    # See {TreeBuilder#add_consecutive_nodes! add_consecutive_nodes!}.
+    #
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] `self`
     def add_nodes!(*a)
-      #a.each { |v| add_node! v }
-      
-      # let's expand the branches first
-      tmp = a.dup
-      branches_positions = tmp.map_send(:"is_a?", Evergreen::Branch).map_with_index { |e,i| i if e == true }.compact
-      branches_positions.each do |pos|
-        branch = a.delete_at pos
-        a.insert pos,   branch.source
-        a.insert pos+1, branch.target
-      end
-
-      begin
-        a.each_nodes_pair do |pair|
-          add_branch! pair[0], pair[1]
-        end
-      rescue Exception
-        # FIXME: well maybe it should not raise and let add_branch! do the checks?
-        raise RawTreeError, "Adding those nodes would break the tree structure."
-      end
+      a.flatten.expand_branches!.each_nodes_pair { |pair| add_branch! pair[0], pair[1] }
       self
     end
 
-    # Same as {TreeBuilder#add_nodes! add_nodes!} but works on copy of the receiver.
+    # Same as {TreeBuilder#add_nodes! add_nodes!} but works on a copy of the receiver.
     #
-    # @param [#each] *a
+    # @param [#each] *a an Enumerable nodes set
     # @return [Tree] a modified copy of `self`
     def add_nodes(*a)
       x = self.class.new(self)
-      x.add_nodes(*a)
+      x.add_nodes!(*a)
+    end
+
+    # Allows for adding consecutive nodes, each nodes being connected to their previous and
+    # next neighbours.
+    #
+    # You may pass {Branch branches} within the nodes.
+    #
+    #     Tree.new.add_consecutive_nodes!(1, 2, 3, :four, Branch.new(:foo, "bar")).branches
+    #     # => (1=2, 2=3, 3=:four, :four=:foo, :foo="bar")
+    #
+    # @param [Array(nodes)] *a flat array of unique nodes
+    # @return [Tree] `self`
+    def add_consecutive_nodes!(*a)
+      #raise "Not implemented yet."
+      add_nodes!(a.expand_branches!.create_nodes_pairs_list)
       self
+    end
+
+    # Same as {TreeBuilder#add_consecutive_nodes! add_consecutive_nodes!} but
+    # works on a copy of the receiver.
+    #
+    # @param [Array(nodes)] *a flat array of unique nodes
+    # @return [Tree] a modified copy of `self`
+    def add_consecutive_nodes(*a)
+      x = self.class.new(self)
+      x.add_consecutive_nodes!(*a)
     end
 
     # Adds all branches mentionned in the specified Enumerable to the branch set.
@@ -138,7 +153,7 @@ module Evergreen
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] `self`
     def add_branches!(*a)
-      a.each { |branch| add_branch!(branch) }
+      a.expand_branches!.each_nodes_pair { |pair| add_branch! pair[0], pair[1] }
       self
     end
 
@@ -149,7 +164,6 @@ module Evergreen
     def add_branches(*a)
       x = self.class.new(self)
       x.add_branches!(*a)
-      self
     end
 
     # Removes all nodes mentionned in the specified Enumerable from the tree.
@@ -159,30 +173,28 @@ module Evergreen
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] `self`
     def remove_nodes!(*a)
-      a.each { |v| remove_node! v }
+      a.flatten.each { |v| remove_node! v }
+      self
     end
     alias delete_nodes! remove_nodes!
 
-    # Same as {RawTreeBuilder#remove_nodes! remove_nodes!} but works on a copy of the receiver.
+    # Same as {TreeBuilder#remove_nodes! remove_nodes!} but works on a copy of the receiver.
     #
     # @param [#each] *a a node Enumerable set
     # @return [Tree] a modified copy of `self`
     def remove_nodes(*a)
       x = self.class.new(self)
-      x.remove_nodes(*a)
+      x.remove_nodes!(*a)
     end
     alias delete_nodes remove_nodes
 
     # Removes all branches mentionned in the specified Enumerable from the tree.
     #
-    # The process relies on {RawTreeBuilder#remove_branches! remove_branches!}.
-    #
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] `self`
     def remove_branches!(*a)
-      # FIXME: isn't that broken (infinite loop)?
-      puts "test"
-      a.each { |e| remove_branch! e }
+      a.expand_branches!.each_nodes_pair { |pair| remove_branch! pair[0], pair[1] }
+      self
     end
     alias delete_branches! remove_branches!
 
@@ -190,6 +202,7 @@ module Evergreen
     #
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] a modified copy of `self`
+    # @see RawTreeBuilder#remove_branch!
     def remove_branches(*a)
       x = self.class.new(self)
       x.remove_branches!(*a)
@@ -202,27 +215,96 @@ module Evergreen
     # If a subclass uses a hash to store nodes, then this can be
     # made into an O(1) average complexity operation.
     #
-    # @param [node] v
+    # @param [node] n
     # @return [Boolean]
-    def node?(v)
-      nodes.include?(v)
+    def node?(n)
+      nodes.include?(n)
     end
     alias has_node? node?
-    # TODO: (has_)nodes?
 
-    # Returns true if u or (u,v) is an {Branch branch} of the tree.
+    # Returns true if all specified nodes belong to the tree.
+    # 
+    # @param [nodes]
+    # @return [Boolean]
+    def nodes?(*maybe_nodes)
+      maybe_nodes.all? { |node| nodes.include? node }
+    end
+    alias has_nodes? nodes?
+
+    # Returns true if any of the specified nodes belongs to the tree.
+    #
+    # @param [nodes]
+    # @return [Boolean]
+    def nodes_among?(*maybe_nodes)
+      maybe_nodes.any? { |node| nodes.include? node }
+    end
+    alias has_nodes_among? nodes_among?
+    alias has_node_among?  nodes_among?
+    # FIXME: these helpers could be backported into Graphy.
+
+    # Returns true if i or (i,j) is a {Branch branch} of the tree.
     #
     # @overload branch?(a)
     #   @param [Branch] a
-    # @overload branch?(u, v)
-    #   @param [node] u
-    #   @param [node] v
+    # @overload branch?(i, j)
+    #   @param [node] i
+    #   @param [node] j
     # @return [Boolean]
     def branch?(*args)
       branches.include?(edge_convert(*args))
     end  
     alias has_branch? branch?
-    
+
+    # Returns true if the specified branches are a subset of or match exactly the
+    # branches set of the tree (no ordering criterion).
+    #
+    # Labels are not part of the matching constraint: only connected nodes
+    # matter in defining branch equality.
+    #
+    # @param [*Branch, *nodes] *maybe_branches a list of branches, either as Branch
+    #   objects or as nodes pairs
+    # @return [Boolean]
+    def branches?(*maybe_branches)
+      list = maybe_branches.create_branches_list
+      all = true
+
+      # Branch objects are really Edge objects within Graphy, therefore
+      # cannot rely on #eql? to compare those structures and must drop
+      # down to the attributes.
+      list.each do |e| # Evergreen::Branch structs
+        all = branches.any? do |b| # Graphy::Edge structs
+          (b[:source] == e[:source]) and (b[:target] == e[:target])
+        end
+      end
+      all
+    end
+    alias has_branches? branches?
+
+    # Returns true if actual branches are included in the specified set of branches
+    # (no ordering criterion).
+    #
+    # Labels are not part of the matching constraint: only connected nodes
+    # matter in defining equality.
+    #
+    # @param [*Branch, *nodes] *maybe_branches a list of branches, either as Branch
+    #   objects or as nodes pairs
+    # @return [Boolean]
+    def branches_among?(*maybe_branches)
+      list = maybe_branches.create_branches_list
+      all = true
+
+      # Branch objects are really Edge objects within Graphy, therefore
+      # cannot rely on #eql? to compare those structures and must drop
+      # down to the attributes.
+      branches.each do |e| # Graphy::Edge structs
+        all = list.any? do |b| # Evergreen::Branch structs
+          (b[:source] == e[:source]) and (b[:target] == e[:target])
+        end
+      end
+      all
+    end
+    alias has_branches_among? branches_among?
+
     # Number of nodes.
     #
     # @return [Integer]

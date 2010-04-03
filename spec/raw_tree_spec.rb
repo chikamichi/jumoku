@@ -239,6 +239,10 @@ describe "RawTreeBuilder" do
         @tree.nodes.should_not include :t8
         @tree.has_branch?(:i1, :t8).should be_false
         @tree.should be_valid
+
+        @tree.remove_branch! Branch.new(:i5, :t7)
+        @tree.has_branch?(:i5, :t7).should be_false
+        @tree.should be_valid
       end
     end
   end
@@ -266,15 +270,30 @@ describe "RawTreeBuilder" do
   describe "#terminal_nodes" do
     describe "an empty tree" do
       it "should have no terminal nodes" do
-        @tree.terminal_nodes.should == 0
+        @tree.terminal_nodes.should be_empty
       end
     end
 
     describe "a tree that's a single node" do
       it "should have one terminal node" do
         @tree.add_node! 1
-        @tree.nodes.size.should == 1
-        @tree.terminal_nodes.should == 1
+        @tree.terminal_nodes.should == [1]
+      end
+    end
+
+    describe "a populated tree" do
+      before :each do
+        @tree.add_node! 1
+        @tree.add_node! 2, 1
+        @tree.add_node! 3, 2
+      end
+
+      it "should have a least two terminal nodes" do
+        @tree.terminal_nodes.size.should >= 2
+
+        @tree.add_node! 4, 3
+        @tree.add_node! 5, 3
+        @tree.terminal_nodes.should == [1, 4, 5]
       end
     end
   end

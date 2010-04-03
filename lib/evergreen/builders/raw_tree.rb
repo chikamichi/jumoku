@@ -76,12 +76,13 @@ module Evergreen
 
     # Adds a new branch to the tree.
     #
-    # As a tree is an undirected structure, the order of the parameter is of
-    # no importance : `add_branch!(u,v) == add_branch!(v,u)`.
+    # As a tree is an undirected structure, the order of the parameters is of
+    # no importance, that is: `add_branch!(u,v) == add_branch!(v,u)`.
     #
-    # @overload add_branch!(i, j)
+    # @overload add_branch!(i, j, l = nil)
     #   @param [node] i
-    #   @param [node] j there is no order constraint on the nodes couple
+    #   @param [node] j
+    #   @param [Label] l
     # @overload add_branch!(b)
     #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [RawTree] self
@@ -93,6 +94,7 @@ module Evergreen
         end
       end
 
+      # TODO: DRY this up.
       if u.is_a? Evergreen::Branch
         v = u.target
         u = u.source
@@ -117,8 +119,8 @@ module Evergreen
     #
     # @param [node] u
     # @return [RawTree] self
-    def remove_node! u
-      if terminal? u
+    def remove_node!(u, force = false)
+      if terminal? u or force
         remove_vertex! u
       else
         # Ensure the connected constraint.
@@ -142,18 +144,29 @@ module Evergreen
     #   @param [Branch] b
     # @return [RawTree] self
     def remove_branch! u, v = nil
+      if u.is_a? Evergreen::Branch
+        v = u.target
+        u = u.source
+      end
+
       if has_node? u and has_node? v
         if terminal? u and terminal? v
           remove_edge! u, v
+          # empty the tree if u and v are the last two nodes, for they're
+          # not connected anymore
+          if [u, v].all? { |node| nodes.include? node } and nodes.size == 2
+            remove_node! u, true
+            remove_node! v, true
+          end
         elsif terminal? u and not terminal? v
           remove_node! u
         elsif terminal? v and not terminal? u
           remove_node! v
         else
-          raise RawTreeError, "Can't remove a non terminal branch in a tree"
+          raise RawTreeError, "Can't remove a non terminal branch in a tree."
         end
       else
-        raise RawTreeError, "Can't remove a branch which does not exist"
+        raise RawTreeError, "Can't remove a branch which does not exist."
       end
     end
     # TODO: add an option to force nodes deletion upon branch deletion
@@ -170,9 +183,15 @@ module Evergreen
 
     # The terminal nodes of the tree in a 1D array.
     #
-    # @return [Array(node)] only terminal nodes
+    # @return [Array(node)] only terminal nodes (empty array if no terminal nodes,
+    #   but should never happen in a tree).
     def terminal_nodes
-      nodes.inject(0) { |num, node| num += 1 if terminal?(node)}
+      nodes.inject([]) do |t_nodes, node| 
+        t_nodes << node if terminal?(node)
+        t_nodes # must return t_nodes explicitily because
+                # (rubydoc Enumerable#inject) "at each step, memo is set to the value returned by the block"
+                # (sets t_nodes to nil otherwise).
+      end
     end
     alias boundaries terminal_nodes
 
@@ -206,11 +225,19 @@ module Evergreen
     # @return [Boolean]
     def terminal? u
       if has_node? u
+        # root is always terminal, otherwise check whether degree is unitary
         nodes == [u] ? true : (degree(u) == 1)
       else
         raise RawTreeNodeError, "Not a node of this tree."
       end
     end
     alias has_terminal_node? terminal?
+
+    # Is the tree empty?
+    #
+    # @return [Boolean]
+    def empty?
+      nodes.empty?
+    end
   end
 end
