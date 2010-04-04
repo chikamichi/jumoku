@@ -1,6 +1,5 @@
-**Build and manipulate tree structures in Ruby.**
-
-*This library is currently being developed :)*
+p=. !http://img547.imageshack.us/img547/2932/logoevergreen.png!
+p=. **Build and manipulate tree structures in Ruby.**
 
 ## Synopsis
 
@@ -12,7 +11,7 @@ Evergreen is built upon [Graphy](http://github.com/bruce/graphy "Graphy on Githu
 
 A Tree is a graph subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Evergreen has support for them, too.
 
-Evergreen provides you with the following structures:
+Evergreen (*currently under early development stage*) provides you with the following structures:
 
 * RawTree: a tree-graph with only basic features
 * **Tree**: a tree-graph with extended features built upon RawTree. That's what you'd want to use as a basic tree structure
@@ -26,11 +25,11 @@ You can also extend those structures with hybrid behaviors (not Graph Theory com
 * Loopy (*not yet*): relax the *acyclic* constraint
 * Atomic (*not yet*): relax the *connected* constraint
 
-## Examples
+## Basic usage
 
-To create an instance of a tree, you may use either:
+To create an instance of a tree, you may use either inheritance or mixins.
 
-inheritance/direct initialization:
+### Inheritance or direct initialization
 
     class MyTree < Evergreen::Tree; end
     tree = MyTree.new
@@ -38,7 +37,7 @@ inheritance/direct initialization:
     # or even simpler:
     tree = Evergreen::Tree.new
 
-mixing-in a "builder" module:
+### Mixing-in a "builder" module
 
     class MyTree
       include Evergreen::RawTreeBuilder
@@ -47,29 +46,26 @@ mixing-in a "builder" module:
 
 Actually the RawTree class is nothing but the mixin code snippet above.
 
-`tree` is now a tree object shipping with some default options:
+### What you get
 
-* it is a valid tree *per se* (undirected, acyclic, connected graph), and Evergreen API's methods will ensure it remains so
-* no constraint for the branching number (number of branches per node)
+`tree` is now a Tree object, shipping with some default options:
 
-What if we want to customize it a bit?
-
-    # Not yet!
-    tree = Evergreen::Tree.new do |conf|
-      conf.branching_number = 4     # at most 4 children per node
-      conf.unique = true            # no duplicated node names allowed
-    end
+* it is a valid tree *per se* (an undirected, acyclic, connected graph)
+* Evergreen API's methods will ensure it remains so
+* it has no constraint on its branching number (the number of branches per node)
 
 ## Install, first steps and bootstraping
 
 In order to play with Evergreen, you must:
 
+    # install a fork of Graphy
     git clone git://github.com/chikamichi/graphy.git
     cd graphy
     rake install
 
     cd..
 
+    # install Evergreen
     git clone git://github.com/chikamichi/evergreen.git
     cd evergreen
     rake install
