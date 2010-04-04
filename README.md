@@ -6,7 +6,7 @@
 
 Evergreen provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Among graphs, trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance. Evergreen is built upon Graphy, a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences and their applications.
 
-## Examples -- updated as the library evolves
+## A few words about *trees*
 
 A Tree is a graph with subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Evergreen has support for them, too.
 
@@ -24,9 +24,11 @@ You can also extend those structures with hybrid behaviors (not Graph Theory com
 * Loopy (*not yet*): relax the *acyclic* constraint
 * Atomic (*not yet*): relax the *connected* constraint
 
+## Examples
+
 To create an instance of a tree, you may use either:
 
-* inheritance/direct initialization:
+inheritance/direct initialization:
 
     class MyTree < Evergreen::Tree; end
     tree = MyTree.new
@@ -34,7 +36,7 @@ To create an instance of a tree, you may use either:
     # or even simpler:
     tree = Evergreen::Tree.new
 
-* mixing-in a "builder" module:
+mixing-in a "builder" module:
 
     class MyTree
       include Evergreen::RawTreeBuilder
@@ -56,7 +58,7 @@ What if we want to customize it a bit?
       conf.unique = true            # no duplicated node names allowed
     end
 
-## Install, first steps and notes
+## Install, first steps and bootstraping
 
 In order to play with Evergreen, you must:
 
