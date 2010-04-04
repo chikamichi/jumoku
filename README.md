@@ -1,5 +1,6 @@
-p=. !http://img547.imageshack.us/img547/2932/logoevergreen.png!
-p=. **Build and manipulate tree structures in Ruby.**
+![Texte alternatif](http://img547.imageshack.us/img547/2932/logoevergreen.png "Evergreen logo")
+
+**Build and manipulate tree structures in Ruby.**
 
 ## Synopsis
 
