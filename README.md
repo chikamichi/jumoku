@@ -1,39 +1,40 @@
-**This library does not exist yet :)**
+**Build and manipulate tree structures in Ruby.**
+
+*This library is currently being developed :)*
 
 ## Synopsis
 
-Ruby lacks a solid, user-friendly tree library. The closest to this is [RubyTree](http://github.com/evolve75/RubyTree "RubyTree on Github"), a great piece of code, but it has some drawbacks:
-
-* the API is quite poorly designed
-* hard-coded, bold conventions
-* it's not versatile nor powerful enough!
-
-What would be great is a modular library providing us with a dead-simple tree behavior we could tailor at will. Maybe a few specialized tree types (binaries…) if the kids yearn for it. One could easily fork RubyTree, but I'm under the impression starting from scratch means more fun and less bias!
-
-## What about graphs?
-
-Trees are just simple graphs, with specific constraints on edges (branches) and vertices (nodes). In graph theory, a tree is defined as a graph which is undirected, acyclic and connected. A forest is a disjoint union of trees. Let's review those constraints:
-
-* undirected: the branches of a tree have no direction;
-* acyclic: a cycle is defined as a path such that the starting node and the ending node are the same. Such paths are forbidden in a tree;
-* connected: a tree is such that pair of distinct nodes can be connected through some path (not a cycle).
-
-This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and some leaves. That's what you would use to use to modelize nested directories, for instance. Such a structure has additional constraints, and it makes sense to derive it from the more generalist tree*-as-in-graph-theory* structure, under the name "arborescence".
-
-Therefore, it is easy to implement those structures using graphs. Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). evergreen will make use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github"). The library will hence be quite minimal: just another implementation of the `Graphy::UndirectdGraph` with appropriate constraints, packaged in a nice tree-oriented DSL (let's talk about nodes, leaves, children, branching and so on).
+Evergreen provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Among graphs, trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance. Evergreen is built upon Graphy, a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences and their applications.
 
 ## Examples -- updated as the library evolves
 
-What we really want is the *simplest DSL possible*.
+A Tree is a graph with subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Evergreen has support for them, too.
 
-For the moment, only one tree flavour is available: the *raw* tree, that is the simplest tree structure matching the standard graph theory definition.
+Evergreen provides you with the following structures:
 
-To create an instance of such a tree, you may use inheritance/direct initialization:
+* RawTree: a tree-graph with only basic features
+* **Tree**: a tree-graph with extended features built upon RawTree. That's what you'd want to use as a basic tree structure
+* AVLTree (*not yet*)
+* RedBlackTree (*not yet*)
+* **Arborescence** (*not yet*): the structure everybody thinks of when asked about "trees", with a root, internal nodes and leaves
 
-    class MyTree < Evergreen::RawTree; end
-    tree = Evergreen::RawTree.new
+You can also extend those structures with hybrid behaviors (not Graph Theory compliant but may be useful):
 
-or mix-in a module "builder":
+* Directed (*not yet*): relax the *undirected* constraint
+* Loopy (*not yet*): relax the *acyclic* constraint
+* Atomic (*not yet*): relax the *connected* constraint
+
+To create an instance of a tree, you may use either:
+
+* inheritance/direct initialization:
+
+    class MyTree < Evergreen::Tree; end
+    tree = MyTree.new
+
+    # or even simpler:
+    tree = Evergreen::Tree.new
+
+* mixing-in a "builder" module:
 
     class MyTree
       include Evergreen::RawTreeBuilder
@@ -42,33 +43,29 @@ or mix-in a module "builder":
 
 Actually the RawTree class is nothing but the mixin code snippet above.
 
-`tree` is now a raw tree object shipping with some default options:
+`tree` is now a tree object shipping with some default options:
 
-* it is a valid tree as defined above, and it ensures it will remain so
-* no constraint for the branching number
-* it is a undirected tree which operators ensure it remains acyclic and connected
+* it is a valid tree *per se* (undirected, acyclic, connected graph), and Evergreen API's methods will ensure it remains so
+* no constraint for the branching number (number of branches per node)
 
 What if we want to customize it a bit?
 
     # Not yet!
-    tree = Evergreen::RawTree.new do |conf|
+    tree = Evergreen::Tree.new do |conf|
       conf.branching_number = 4     # at most 4 children per node
       conf.unique = true            # no duplicated node names allowed
-      conf.direction = :bottom_up   # default is :top_down
     end
 
-Then, we can think about implementing specialized trees (arborescence, binary trees, AVL, Red-Black... [and much more](http://en.wikipedia.org/wiki/List_of_graph_theory_topics#Trees)) and the appropriate set of search/traversal algorithms if needed.
-
 ## Install, first steps and notes
-
-One issue with Graphy, as with any other graph lib outthere, is that it provides classes, not modules. I forked Graphy and switch from a class-based implementation to a module-based one (adding a class layer btw, so the public API remains the same). Hence both behaviors are provided: mixin and subclassing. evergreen can in turn provides the same flexibility.
 
 In order to play with Evergreen, you must:
 
     git clone git://github.com/chikamichi/graphy.git
     cd graphy
     rake install
+
     cd..
+
     git clone git://github.com/chikamichi/evergreen.git
     cd evergreen
     rake install
@@ -80,15 +77,35 @@ Now you can play in IRB:
     => true 
     ruby-1.9.1-p378 > include Evergreen # so you won't have to prefix everything with "Evergreen::"
     => Object 
-    ruby-1.9.1-p378 > t = RawTree.new
-    => #<Evergreen::RawTree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set> 
+    ruby-1.9.1-p378 > t = Tree.new
+    => #<Evergreen::Tree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set> 
     ruby-1.9.1-p378 > t.methods
     => # lot of stuff hopefully :)
 
-Best way to start: [read the doc](http://rdoc.info/projects/chikamichi/evergreen "Evergreen on rdoc.info"). You can locally generate the YARDoc with either commands (need to install the `yard` gem if you have not yet):
+A good way to get you started is by [reading the doc online](http://rdoc.info/projects/chikamichi/evergreen "Evergreen on rdoc.info"). You can locally generate the doc with any of the following commands (you'll need to have the `yard` gem installed):
 
     rake yard
     yardoc
 
-Be sure to take a look at the tests in `spec/` as well, as it documents the public API extensively.
+Be sure to take a look at the tests in `spec/` as well, as they document the public API extensively.
+
+## What about graphs?
+
+Trees are just simple graphs, with specific constraints on edges (branches) and vertices (nodes). In graph theory, a tree is defined as a graph which is undirected, acyclic and connected. A forest is a disjoint union of trees. Let's review those constraints:
+
+* undirected: the branches of a tree have no direction;
+* acyclic: a cycle is defined as a path such that the starting node and the ending node are the same. Such paths are forbidden in a tree;
+* connected: a tree is such that pair of distinct nodes can be connected through some path (not a cycle).
+
+This is restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, with a root and some leaves. That's what you would use to use to modelize nested directories, for instance. Such a structure has additional constraints, and it makes sense to derive it from the more generalist tree*-as-in-graph-theory* structure, under the name "arborescence".
+
+Therefore, it is easy to implement those structures using graphs. Fortunately, several ruby graph libraries exist (and even a ruby binding for the igraph C backend, but that'd be a burden to use). Evergreen makes use of the most up-to-date project among those available, [Graphy](http://github.com/bruce/graphy "Graphy on Github").
+
+## License
+
+See the LICENSE file.
+
+## Contributing
+
+Fork, hack, request!
 
