@@ -4,11 +4,13 @@
 
 ## Synopsis
 
-Evergreen provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Among graphs, trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance. Evergreen is built upon Graphy, a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences and their applications.
+Evergreen provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance.
+
+Evergreen is built upon [Graphy](http://github.com/bruce/graphy "Graphy on Github"), a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences, why they're different and how to make good use of them.
 
 ## A few words about *trees*
 
-A Tree is a graph with subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Evergreen has support for them, too.
+A Tree is a graph subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Evergreen has support for them, too.
 
 Evergreen provides you with the following structures:
 
