@@ -71,17 +71,17 @@ Now you can play in IRB:
 
 ``` bash
 $ irb
-ruby-1.9.1-p378 > require 'Jumoku'
+ruby-1.9.1-p378 > require 'jumoku'
 => true
 ruby-1.9.1-p378 > include Jumoku # so you won't have to prefix everything with "Jumoku::"
 => Object
 ruby-1.9.1-p378 > t = Tree.new
-=> #<Jumoku::Tree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set> 
+=> #<Jumoku::Tree:0x000000020d5ac8 @vertex_dict={}, @vertex_labels={}, @edge_labels={}, @allow_loops=false, @parallel_edges=false, @edgelist_class=Set>
 ruby-1.9.1-p378 > t.methods
 => # lot of stuff hopefully :)
 ```
 
-A good way to get you started is by [reading the doc online](http://rdoc.info/projects/chikamichi/Jumoku "Jumoku on rdoc.info"). You can locally generate the doc with any of the following commands (you'll need to have the `yard` gem installed):
+A good way to get you started is by [reading the doc online](http://rdoc.info/projects/chikamichi/jumoku "Jumoku on rdoc.info"). You can locally generate the doc with any of the following commands (you'll need to have the `yard` gem installed):
 
 ``` bash
 rake yard
