@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.author = "Jean-Denis Vauguet <jd@vauguet.fr>"
   s.description = %q{Jumoku provides you with tree behaviors to mixin and tree classes to inherit from. Raw tree, common binary trees, custom trees...}
   s.email = %q{jd@vauguet.fr}
-  s.files = Dir["lib/**/*"] + ["LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["lib/**/*"] + Dir["vendor/**/*"] + Dir["spec/**/*"] + ["Gemfile", "LICENSE", "Rakefile", "README.md"]
   s.homepage = %q{http://github.com/chikamichi/jumoku}
   s.summary = %q{A fully fledged tree library for Ruby.}
   s.add_dependency "activesupport"

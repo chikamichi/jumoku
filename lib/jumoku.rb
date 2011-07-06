@@ -1,5 +1,7 @@
-$:.unshift File.dirname(__FILE__) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+libpath = File.expand_path(File.dirname(__FILE__))
+$:.unshift File.dirname(__FILE__) unless $:.include?(File.dirname(__FILE__)) || $:.include?(libpath)
+$: << libpath + '/../vendor/git/graphy/lib'
+puts $:.inspect
 
 require 'pathname'
 require 'pp'
