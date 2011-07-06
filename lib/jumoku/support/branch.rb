@@ -1,4 +1,4 @@
 module Jumoku
-  class Branch < Graphy::Edge
+  class Branch < Plexus::Edge
   end
 end

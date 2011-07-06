@@ -4,7 +4,7 @@ module Jumoku
   #
   # Each implementation module must implement the following routines:
   #
-  # * add_node!(n, l = nil) — adds a node to the tree and return the tree; l is an optional label (see Graphy library).
+  # * add_node!(n, l = nil) — adds a node to the tree and return the tree; l is an optional label (see Plexus library).
   # * add_branch!(i, j = nil, l = nil) — adds a branch to the tree and return the tree. i can be a {Branch}, or (i,j) a node pair; l is an optional label.
   # * remove_node!(n) — removes a node from the tree and return the tree.
   # * remove_branch!(i, j = nil) — removes an edge from the graph and return the tree. i can be a {Branch}, or (i,j) a node pair.

@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
 gemspec
-gem 'graphy', :path => 'vendor/git/graphy'
+gem 'plexus', :path => 'vendor/git/plexus'

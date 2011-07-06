@@ -252,7 +252,7 @@ module Jumoku
     end
     alias has_nodes_among? nodes_among?
     alias has_node_among?  nodes_among?
-    # FIXME: these helpers could be backported into Graphy.
+    # FIXME: these helpers could be backported into Plexus.
 
     # Returns true if i or (i,j) is a {Branch branch} of the tree.
     #
@@ -280,11 +280,11 @@ module Jumoku
       list = maybe_branches.create_branches_list
       all = true
 
-      # Branch objects are really Edge objects within Graphy, therefore
+      # Branch objects are really Edge objects within Plexus, therefore
       # cannot rely on #eql? to compare those structures and must drop
       # down to the attributes.
       list.each do |e| # Jumoku::Branch structs
-        all = branches.any? do |b| # Graphy::Edge structs
+        all = branches.any? do |b| # Plexus::Edge structs
           (b[:source] == e[:source]) and (b[:target] == e[:target])
         end
       end
@@ -305,10 +305,10 @@ module Jumoku
       list = maybe_branches.create_branches_list
       all = true
 
-      # Branch objects are really Edge objects within Graphy, therefore
+      # Branch objects are really Edge objects within Plexus, therefore
       # cannot rely on #eql? to compare those structures and must drop
       # down to the attributes.
-      branches.each do |e| # Graphy::Edge structs
+      branches.each do |e| # Plexus::Edge structs
         all = list.any? do |b| # Jumoku::Branch structs
           (b[:source] == e[:source]) and (b[:target] == e[:target])
         end

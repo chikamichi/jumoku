@@ -317,7 +317,7 @@ describe "RawTreeBuilder" do
         @tree.add_node! :one
         @tree.add_node! :two, :one
         @tree.branches.size.should == 1
-        @tree.branches.first.class.should == Graphy::Edge # the Jumoku::Branch class is just
+        @tree.branches.first.class.should == Plexus::Edge # the Jumoku::Branch class is just
                                                           # a lazy wrapper of it
         @tree.should be_valid
       end

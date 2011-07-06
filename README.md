@@ -6,7 +6,7 @@
 
 Jumoku provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance.
 
-Jumoku is built upon [Graphy](http://github.com/chikamichi/graphy "Graphy on Github"), a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences, why they're different and how to make good use of them.
+Jumoku is built upon [Plexus](http://github.com/chikamichi/plexus "Plexus on Github"), a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences, why they're different and how to make good use of them.
 
 ## A few words about *trees*
 
@@ -100,7 +100,7 @@ Trees are just simple graphs, with specific constraints on edges (branches) and 
 
 This is quite restrictive, but not *that* restrictive. Instinctively, a tree structure would rather be described as an arborescence, that is a collection of nodes with a root node and some leaves (ending nodes), that is with a general direction (top-down). That is what you would use to use to modelize nested directories, for instance. From the mathematical point of view, legacy trees and arborescences have some little differencies (the latter are more constrained). Jumoku provides both structures.
 
-Several ruby graph libraries exist, some pure-ruby, some as bindings (for instance, the popular igraph C backend). Jumoku makes use of the most up-to-date project among those available, [Graphy](http://github.com/chikamichi/graphy "Graphy on Github"). It's been forked to implement new features required by Jumoku, and is vendorized within this gem.
+Several ruby graph libraries exist, some pure-ruby, some as bindings (for instance, the popular igraph C backend). Jumoku makes use of the most up-to-date project among those available, [Plexus](http://github.com/chikamichi/plexus "Plexus on Github"). It's been forked to implement new features required by Jumoku, and is vendorized within this gem.
 
 ## License
 

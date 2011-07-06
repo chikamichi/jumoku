@@ -1,13 +1,13 @@
 libpath = File.expand_path(File.dirname(__FILE__))
 $:.unshift File.dirname(__FILE__) unless $:.include?(File.dirname(__FILE__)) || $:.include?(libpath)
-$: << libpath + '/../vendor/git/graphy/lib'
+$: << libpath + '/../vendor/git/plexus/lib'
 puts $:.inspect
 
 require 'pathname'
 require 'pp'
 require 'active_support'
 require 'facets'
-require 'graphy'
+require 'plexus'
 
 module Jumoku
   # jumoku internals: graph builders and additionnal behaviors

@@ -4,7 +4,7 @@ module Jumoku
   # behavior. Those implementations are under the control of the {TreeAPI}.
   #
   # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
-  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backend,
+  # connected, acyclic graphs. Using Plexus::UndirectedGraphBuilder as its backend,
   # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
   # acyclic). {RawTreeBuilder RawTree} offers limited functionalities, therefore the main
   # tree structure you'll likely to use is its extended version, {TreeBuilder Tree}. A
@@ -20,7 +20,7 @@ module Jumoku
   # This builder defines a few methods not required by the API so as to maintain consistency
   # in the DSL.
   module RawTreeBuilder
-    include Graphy::UndirectedGraphBuilder
+    include Plexus::UndirectedGraphBuilder
 
     # This method is called by the specialized implementations
     # upon tree creation.
@@ -39,7 +39,7 @@ module Jumoku
         # Ensure the builder abides by its API requirements.
         include Jumoku::TreeAPI
       end
-      super(*params) # Delegates to Graphy.
+      super(*params) # Delegates to Plexus.
     end
 
     # Ensure trees are seen as undirected graphs.
@@ -48,7 +48,7 @@ module Jumoku
     def directed?
       return false
     end
-    # FIXME: should be able to reach Graphy's method ?!
+    # FIXME: should be able to reach Plexus's method ?!
 
     # Adds the node to the tree.
     #
