@@ -104,7 +104,7 @@ Several ruby graph libraries exist, some pure-ruby, some as bindings (for instan
 
 ## License
 
-See the LICENSE file.
+[MIT License](http://en.wikipedia.org/wiki/MIT_License). See the LICENSE file.
 
 ## Contributing
 
