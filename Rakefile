@@ -1,8 +1,6 @@
 require 'rake'
 require 'yard'
 require 'pathname'
-require 'yardstick/rake/measurement'
-require 'yardstick/rake/verify'
 
 begin
   require 'jeweler'
@@ -57,14 +55,6 @@ end
 
 YARD::Rake::YardocTask.new do |t|
   t.files   = ['lib/**/*.rb', 'spec/**/*.rb', 'README.md', 'TODO.md', 'CREDITS.md', 'LICENSE', 'VERSION']
-end
-
-Yardstick::Rake::Measurement.new(:yardstick_measure) do |measurement|
-  measurement.output = 'measurement/report.txt'
-end
-
-Yardstick::Rake::Verify.new do |verify|
-  verify.threshold = 100
 end
 
 # stolen from Rails lib/rails/tasks/annotations.rake spec

@@ -26,7 +26,7 @@ module Evergreen
     def initialize(*params)
       super(*params)
     end
-   
+
     # Non destructive version of {RawTreeBuilder#add_node!} (works on a copy of the tree).
     #
     # @overload add_node!(n)
@@ -78,7 +78,7 @@ module Evergreen
       x = self.class.new(self)
       x.remove_branch!(i, j)
     end
-    
+
     # Adds all specified nodes to the node set.
     #
     # The nodes defines implicit branches, that is it is mandatory to provide
@@ -86,7 +86,7 @@ module Evergreen
     # Branch objects within the list, though.
     #
     # Valid usage:
-    # 
+    #
     #     tree = Tree.new                # an empty tree
     #     tree.add_nodes!(1,2, 2,3, 3,4) # tree.nodes => [1, 2, 3, 4]
     #                                    # branches are (1-2), (2-3), (3-4)
@@ -235,7 +235,7 @@ module Evergreen
     alias has_node? node?
 
     # Returns true if all specified nodes belong to the tree.
-    # 
+    #
     # @param [nodes]
     # @return [Boolean]
     def nodes?(*maybe_nodes)
@@ -264,7 +264,7 @@ module Evergreen
     # @return [Boolean]
     def branch?(*args)
       branches.include?(edge_convert(*args))
-    end  
+    end
     alias has_branch? branch?
 
     # Returns true if the specified branches are a subset of or match exactly the

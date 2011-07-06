@@ -17,8 +17,8 @@ module Evergreen
     def self.included(klass)
       @api_methods ||= [:add_node!, :add_branch!, :remove_node!, :remove_branch!, :nodes, :terminal_nodes, :branches]
       ruby_18 { @api_methods.each { |m| m.to_s } }
-      
-      @api_methods.each do |meth| 
+
+      @api_methods.each do |meth|
         raise "Must implement #{meth}" unless klass.instance_methods.include?(meth)
       end
     end

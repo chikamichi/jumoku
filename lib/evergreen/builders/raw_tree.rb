@@ -4,7 +4,7 @@ module Evergreen
   # behavior. Those implementations are under the control of the {TreeAPI}.
   #
   # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
-  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backend, 
+  # connected, acyclic graphs. Using Graphy::UndirectedGraphBuilder as its backend,
   # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
   # acyclic). {RawTreeBuilder RawTree} offers limited functionalities, therefore the main
   # tree structure you'll likely to use is its extended version, {TreeBuilder Tree}. A
@@ -186,7 +186,7 @@ module Evergreen
     # @return [Array(node)] only terminal nodes (empty array if no terminal nodes,
     #   but should never happen in a tree).
     def terminal_nodes
-      nodes.inject([]) do |t_nodes, node| 
+      nodes.inject([]) do |t_nodes, node|
         t_nodes << node if terminal?(node)
         t_nodes # must return t_nodes explicitily because
                 # (rubydoc Enumerable#inject) "at each step, memo is set to the value returned by the block"

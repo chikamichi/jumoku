@@ -1,10 +1,14 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'evergreen'
-require 'spec'
-#require 'spec/autorun'
+require File.expand_path("../../lib/evergreen.rb",  __FILE__)
 
+require 'evergreen'
 include Evergreen
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
+  # Remove this line if you don't want RSpec's should and should_not
+  # methods or matchers
+  require 'rspec/expectations'
+  config.include RSpec::Matchers
+
+  # == Mock Framework
+  config.mock_with :rspec
 end
