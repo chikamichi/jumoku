@@ -1,5 +1,3 @@
-![Texte alternatif](http://img547.imageshack.us/img547/2932/logoJumoku.png "Jumoku logo")
-
 **Build and manipulate tree structures in Ruby.**
 
 ## Synopsis
