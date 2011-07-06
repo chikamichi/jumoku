@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 # The Tree builder extends the core functionalities provided
-# by RawTreeBuilder. 
+# by RawTreeBuilder.
 #
 # Note: these tests may make use of the "root"/"children" terminology.
 # Be aware this has got *no* structural meaning as a tree is, by
@@ -50,7 +50,7 @@ describe "TreeBuilder" do
         @tree.add_node 5, 4
         @tree.add_node 3, 6
         @tree.nodes.size.should == 4
-        
+
         new_tree = @tree.add_node 5, 4
         new_tree.nodes.size.should == @tree.nodes.size + 1
         new_tree.nodes.should == [1, 2, 3, 4, 5]
@@ -180,7 +180,7 @@ describe "TreeBuilder" do
         @tree.should be_empty
         new_tree.nodes.should == [1, 2, 3, 4]
         new_tree.should be_valid
-        
+
         new_tree = @tree.add_nodes Branch.new(4, 5)
         @tree.should be_empty
         new_tree.nodes.should == [4, 5]
@@ -352,7 +352,7 @@ describe "TreeBuilder" do
       end
     end
   end
-  
+
   describe "#remove_branches" do
     describe "an empty tree" do
       it "should not allow for removing branches" do
@@ -423,7 +423,7 @@ describe "TreeBuilder" do
       end
     end
   end
-  
+
   describe "#nodes_among?" do
     describe "an empty tree" do
       it "should not report having any node" do
@@ -461,7 +461,7 @@ describe "TreeBuilder" do
         @tree.has_branch?(1,2).should be_false
       end
     end
-    
+
     describe "a populated tree" do
      before :each do
         @tree.add_nodes! 1,2, 2,3, 3,4
@@ -495,7 +495,7 @@ describe "TreeBuilder" do
       end
     end
   end
-  
+
   describe "#num_branches" do
     describe "an empty tree" do
       it "should report having no branch" do
@@ -537,7 +537,7 @@ describe "TreeBuilder" do
       end
     end
   end
-  
+
   describe "#add_consecutive_nodes" do
     describe "a tree" do
       it "should create a new, valid, populated tree if all specified nodes define a valid tree structure" do

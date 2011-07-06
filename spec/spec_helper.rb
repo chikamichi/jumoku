@@ -1,7 +1,7 @@
-require File.expand_path("../../lib/evergreen.rb",  __FILE__)
+require File.expand_path("../../lib/jumoku.rb",  __FILE__)
 
-require 'evergreen'
-include Evergreen
+require 'jumoku'
+include Jumoku
 
 RSpec.configure do |config|
   # Remove this line if you don't want RSpec's should and should_not

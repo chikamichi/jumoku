@@ -1,4 +1,4 @@
-module Evergreen
+module Jumoku
   # This module defines the minimum set of functions required to make a tree that can
   # use the algorithms defined by this library.
   #
@@ -23,5 +23,5 @@ module Evergreen
       end
     end
 
-  end # TreeAPI
-end # Evergreen
+  end
+end

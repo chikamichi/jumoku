@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 # The RawTree builder implements TreeAPI and ensures the tree
 # is a valid tree as far as Graph Theory is concerned:
-# a tree is an undirected, connected, acyclic graph. 
+# a tree is an undirected, connected, acyclic graph.
 #
 # Note: these tests may make use of the "root"/"children" terminology.
 # Be aware this has got *no* structural meaning as a tree is, by
@@ -35,7 +35,7 @@ describe "RawTreeBuilder" do
     describe "an empty tree" do
       it "should grow up as a valid tree when adding its first node" do
         @tree.nodes.size.should == 0
-        
+
         @tree.add_node! "root"
         @tree.nodes.size.should == 1
         @tree.nodes.should == ["root"]
@@ -56,10 +56,10 @@ describe "RawTreeBuilder" do
 
         @tree.add_node! "child2", "root"
         @tree.add_node! "grand-child1", "child2"
-        @tree.add_node! Evergreen::Branch.new("grand-child2", "child2")
+        @tree.add_node! Jumoku::Branch.new("grand-child2", "child2")
 
         @tree.nodes.size.should == 5
-        
+
         the_nodes = ["root", "child1", "child2", "grand-child1", "grand-child2"]
         @tree.nodes.should == the_nodes
         @tree.topsort.should_not == the_nodes
@@ -104,7 +104,7 @@ describe "RawTreeBuilder" do
       it "should not allow for disconnected branch creation" do
         lambda { @tree.add_branch! 10, 11 }.should raise_error RawTreeError
       end
-      
+
       it "should grow up as a valid tree when populated with (connected) branches" do
         @tree.nodes.size.should == 1
 
@@ -128,7 +128,7 @@ describe "RawTreeBuilder" do
       end
     end
   end
- 
+
   describe "#remove_node!" do
     describe "an empty tree" do
       it "should not allow to remove a node since there's none" do
@@ -163,7 +163,7 @@ describe "RawTreeBuilder" do
         @tree1.should be_valid
         @tree1.nodes.should == [2]
         @tree1.should be_valid
-        
+
         @tree2.remove_node! 2
         @tree2.should be_valid
         @tree2.nodes.should == [1]
@@ -207,7 +207,7 @@ describe "RawTreeBuilder" do
         lambda { @tree.remove_branch! :null, :none }.should raise_error RawTreeError
       end
     end
-    
+
     describe "an tree that is only one node" do
       before :each do
         @tree.add_node! 1
@@ -217,7 +217,7 @@ describe "RawTreeBuilder" do
         lambda { @tree.remove_branch! 1, :none }.should raise_error RawTreeError
       end
     end
-    
+
     describe "a tree with more than two nodes" do
       before :each do
         # TODO: DRY this snippet
@@ -258,7 +258,7 @@ describe "RawTreeBuilder" do
       it "should be aware of its node(s)" do
         @tree.add_node! :solo
         @tree.nodes.should == [:solo]
-        
+
         @tree.add_branch! 2, :solo
         @tree.add_branch! 2, 3
         @tree.nodes.should == [:solo, 2, 3]
@@ -317,7 +317,7 @@ describe "RawTreeBuilder" do
         @tree.add_node! :one
         @tree.add_node! :two, :one
         @tree.branches.size.should == 1
-        @tree.branches.first.class.should == Graphy::Edge # the Evergreen::Branch class is just
+        @tree.branches.first.class.should == Graphy::Edge # the Jumoku::Branch class is just
                                                           # a lazy wrapper of it
         @tree.should be_valid
       end

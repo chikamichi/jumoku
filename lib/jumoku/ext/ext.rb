@@ -15,7 +15,7 @@ class Array
   # @param [*nodes, *Branch] *a a flat list of nodes pairs and branches
   # @return [*nodes] a flat list of nodes pairs
   def expand_branches!
-    branches_positions = self.dup.map_send(:"is_a?", Evergreen::Branch).map_with_index { |e,i| i if e == true }.compact
+    branches_positions = self.dup.map_send(:"is_a?", Jumoku::Branch).map_with_index { |e,i| i if e == true }.compact
     # obviously positions will gain an offset of 1 for each expanded branch,
     # so let's correct this right away
     branches_positions = branches_positions.map_with_index { |e,i| e += i }
@@ -44,7 +44,7 @@ class Array
 
   def create_branches_list
     branches = []
-    self.expand_branches!.each_by(2) { |pair| branches << Evergreen::Branch.new(pair[0], pair[1]) }
+    self.expand_branches!.each_by(2) { |pair| branches << Jumoku::Branch.new(pair[0], pair[1]) }
     branches
   end
 end

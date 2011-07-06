@@ -1,4 +1,4 @@
-module Evergreen
+module Jumoku
   # This builder extends the cheap implementation {RawTreeBuilder}, which
   # purpose is to implement the {TreeAPI}. {TreeBuilder} provides extended
   # functionalities and acts as the main tree structure you may use, either
@@ -283,7 +283,7 @@ module Evergreen
       # Branch objects are really Edge objects within Graphy, therefore
       # cannot rely on #eql? to compare those structures and must drop
       # down to the attributes.
-      list.each do |e| # Evergreen::Branch structs
+      list.each do |e| # Jumoku::Branch structs
         all = branches.any? do |b| # Graphy::Edge structs
           (b[:source] == e[:source]) and (b[:target] == e[:target])
         end
@@ -309,7 +309,7 @@ module Evergreen
       # cannot rely on #eql? to compare those structures and must drop
       # down to the attributes.
       branches.each do |e| # Graphy::Edge structs
-        all = list.any? do |b| # Evergreen::Branch structs
+        all = list.any? do |b| # Jumoku::Branch structs
           (b[:source] == e[:source]) and (b[:target] == e[:target])
         end
       end

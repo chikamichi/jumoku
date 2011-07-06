@@ -1,4 +1,4 @@
-module Evergreen
+module Jumoku
   # This module provides the basic routines needed to implement the specialized builders:
   # {TreeBuilder}, {BinaryTreeBuilder}, … each of them streamlining {RawTreeBuilder}'s
   # behavior. Those implementations are under the control of the {TreeAPI}.
@@ -37,7 +37,7 @@ module Evergreen
         self
       end.module_eval do
         # Ensure the builder abides by its API requirements.
-        include Evergreen::TreeAPI
+        include Jumoku::TreeAPI
       end
       super(*params) # Delegates to Graphy.
     end
@@ -64,7 +64,7 @@ module Evergreen
     def add_node! u, v = nil
       if nodes.empty?
         add_vertex! u
-      elsif u.is_a? Evergreen::Branch
+      elsif u.is_a? Jumoku::Branch
         add_branch! u
       elsif not v.nil?
         add_branch! u, v
@@ -95,7 +95,7 @@ module Evergreen
       end
 
       # TODO: DRY this up.
-      if u.is_a? Evergreen::Branch
+      if u.is_a? Jumoku::Branch
         v = u.target
         u = u.source
       end
@@ -144,7 +144,7 @@ module Evergreen
     #   @param [Branch] b
     # @return [RawTree] self
     def remove_branch! u, v = nil
-      if u.is_a? Evergreen::Branch
+      if u.is_a? Jumoku::Branch
         v = u.target
         u = u.source
       end
