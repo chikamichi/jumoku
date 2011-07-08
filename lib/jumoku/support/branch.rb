@@ -1,4 +1,4 @@
 module Jumoku
-  class Branch < Plexus::Edge
-  end
+  class Branch < Plexus::Edge; end
+  class DirectedBranch < Plexus::Arc; end
 end

@@ -8,13 +8,10 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 # definition, undirected. Those terms are used only to simplify
 # nodes creation within the tests, so I recall who branched who.
 # For tests about rooted tree, see arborescence_spec.rb
+#
 describe "TreeBuilder" do
   before :each do
-    class MyTree
-      include TreeBuilder
-    end
-
-    @tree = MyTree.new
+    @tree = Tree.new
   end
 
   describe "#new" do
@@ -24,15 +21,15 @@ describe "TreeBuilder" do
     end
   end
 
-  ## Core API is tested in raw_tree_spec.rb.
-  ## The following tests focus on TreeBuilder additional methods.
+  ## The core TreeAPI is tested in raw_tree_spec.rb.
+  ## The following tests focus on methods added by TreeBuilder.
 
   describe "#add_node" do
     describe "an empty tree" do
       it "should create a new, valid tree with a single node when its first node is added" do
         @tree.add_node 1
-        @tree.should be_empty
-
+        @tree.should be_empty # the original tree is not modified
+        # a brand new tree is created instead, extending the original one
         new_tree = @tree.add_node 1
         new_tree.nodes.should == [1]
         new_tree.should be_valid
@@ -70,7 +67,7 @@ describe "TreeBuilder" do
       end
     end
 
-    describe "a populate" do
+    describe "a populated tree" do
       before :each do
         @tree.add_branch! 1, 2
         @tree.add_branch! 2, 3
@@ -97,7 +94,7 @@ describe "TreeBuilder" do
       end
     end
 
-    describe "a tree that's one node only" do
+    describe "a tree containing one node" do
       before :each do
         @tree.add_node! 1
       end

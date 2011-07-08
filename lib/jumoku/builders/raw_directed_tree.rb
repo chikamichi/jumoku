@@ -19,9 +19,8 @@ module Jumoku
   #
   # This builder defines a few methods not required by the API so as to maintain consistency
   # in the DSL.
-  module RawTreeBuilder
-    include Plexus::UndirectedGraphBuilder
-
+  module RawDirectedTreeBuilder
+    include Plexus::DirectedGraphBuilder
     # This method is called by the specialized implementations upon tree creation.
     #
     # Initialization parameters can include:
@@ -33,9 +32,7 @@ module Jumoku
     # @return [RawTree]
     #
     def initialize(*params)
-      class << self
-        self
-      end.module_eval do
+      class << self; self; end.module_eval do
         # Ensure the builder abides by its API requirements.
         include TreeAPI
       end
@@ -51,12 +48,12 @@ module Jumoku
     # @overload add_node!(n)
     #   @param [node] n
     # @overload add_node!(b)
-    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    #   @param [DirectedBranch] b DirectedBranch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [RawTree] self
     def add_node! u, v = nil
       if nodes.empty?
         add_vertex! u
-      elsif u.is_a? Branch
+      elsif u.is_a? DirectedBranch
         add_branch! u
       elsif not v.nil?
         add_branch! u, v
@@ -76,7 +73,7 @@ module Jumoku
     #   @param [node] j
     #   @param [Label] l
     # @overload add_branch!(b)
-    #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
+    #   @param [DirectedBranch] b DirectedBranch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [RawTree] self
     #
     def add_branch! u, v = nil, l = nil
@@ -88,13 +85,13 @@ module Jumoku
       end
 
       # TODO: DRY this up.
-      if u.is_a? Branch
+      if u.is_a? DirectedBranch
         v = u.target
         u = u.source
       end
 
       if has_node? u or has_node? v or nodes.empty?
-        add_edge! u, v, l
+        add_arc! u, v, l
       else
         # Ensure the connected constraint.
         raise RawTreeError, "Can't add a dead branch to a tree."
@@ -134,17 +131,17 @@ module Jumoku
     #   @param [node] i
     #   @param [node] j
     # @overload remove_branch!(b)
-    #   @param [Branch] b
+    #   @param [DirectedBranch] b
     # @return [RawTree] self
     def remove_branch! u, v = nil
-      if u.is_a? Branch
+      if u.is_a? DirectedBranch
         v = u.target
         u = u.source
       end
 
       if has_node? u and has_node? v
         if terminal? u and terminal? v
-          remove_edge! u, v
+          remove_arc! u, v
           # empty the tree if u and v are the last two nodes, for they're
           # not connected anymore
           if [u, v].all? { |node| nodes.include? node } and nodes.size == 2
@@ -190,14 +187,14 @@ module Jumoku
 
     # The branches of the tree in a 1D array.
     #
-    # @return [Array(Branch)]
+    # @return [Array(DirectedBranch)]
     def branches
-      edges
+      arcs
     end
 
     # Aliasing.
     alias has_node? has_vertex?
-    alias has_branch? has_edge?
+    alias has_branch? has_arc?
 
     # Tree helpers.
 

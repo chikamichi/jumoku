@@ -11,10 +11,6 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 # For tests about rooted tree, see arborescence_spec.rb
 describe "RawTreeBuilder" do
   before :each do
-    #class MyTree
-      #include RawTreeBuilder
-    #end
-
     @tree = RawTree.new
   end
 
@@ -23,8 +19,8 @@ describe "RawTreeBuilder" do
       @tree.should_not be_directed
       @tree.should be_acyclic
       @tree.should be_connected
-      # aka @tree.should be_valid, 'll use that from now own
-
+      # aka @tree.should be_valid, which we will use further on
+      @tree.should be_valid
       @tree.nodes.should be_empty
     end
   end
@@ -36,7 +32,7 @@ describe "RawTreeBuilder" do
       it "should grow up as a valid tree when adding its first node" do
         @tree.nodes.size.should == 0
 
-        @tree.add_node! "root"
+        @tree.add_node! "root" # adding a raw string as the first node
         @tree.nodes.size.should == 1
         @tree.nodes.should == ["root"]
       end
@@ -44,14 +40,19 @@ describe "RawTreeBuilder" do
 
     describe "a tree with only one node" do
       before :each do
-        @tree.add_node! "root" # remember, this has no meaning
+        # remember, this 'root' thing retain no particular meaning, it's just a raw string
+        # and I could have written "Joe" instead
+        @tree.add_node! "root"
       end
 
-      it "should raise an error when trying to add a new (disconnected) node" do
+      it "should raise an error when trying to add a new, disconnected node" do
+        # again, I'll use childX for the sake of this specs, as it is easy to
+        # remember, but the node is not really a "child" of the previous node,
+        # it is just connected
         lambda { @tree.add_node! "child1" }.should raise_error
       end
 
-      it "should grow up as a valid tree when adding new (connected) nodes" do
+      it "should grow up as a valid tree when adding new, connected nodes" do
         lambda { @tree.add_node! "child1", "root" }.should_not raise_error
 
         @tree.add_node! "child2", "root"
@@ -59,18 +60,14 @@ describe "RawTreeBuilder" do
         @tree.add_node! Jumoku::Branch.new("grand-child2", "child2")
 
         @tree.nodes.size.should == 5
-
-        the_nodes = ["root", "child1", "child2", "grand-child1", "grand-child2"]
-        @tree.nodes.should == the_nodes
-        @tree.topsort.should_not == the_nodes
+        @tree.nodes.should == ["root", "child1", "child2", "grand-child1", "grand-child2"]
 
         @tree.add_node! "grand-grand-child1", "grand-child1"
         @tree.add_node! "child3", "root"
         @tree.add_node! "grand-child3", "child3"
         @tree.add_node! "grand-grand-grand-child", "grand-grand-child1"
-        @tree.should_not be_directed
-        @tree.should be_acyclic
-        @tree.should be_connected
+
+        @tree.should be_valid
       end
 
       it "should raise an error when trying to form a cycle" do
@@ -78,34 +75,35 @@ describe "RawTreeBuilder" do
         @tree.add_node! "child2", "root"
         @tree.add_node! "grand-child", "child1"
 
-        lambda { @tree.add_node! "grand-child", "child2" }.should raise_error RawTreeError
+        lambda { @tree.add_node! "grand-child", "child2" }.should raise_error ForbiddenCycle
 
         @tree.add_node! "grand-grand-child", "grand-child"
-        lambda { @tree.add_node! "grand-grand-child", "child1" }.should raise_error RawTreeError
-        lambda { @tree.add_node! "grand-grand-child", "child2" }.should raise_error RawTreeError
+
+        lambda { @tree.add_node! "grand-grand-child", "child1" }.should raise_error ForbiddenCycle
+        lambda { @tree.add_node! "grand-grand-child", "child2" }.should raise_error ForbiddenCycle
       end
     end
   end
 
   describe "#add_branch!" do
     describe "an empty tree" do
-      it "should allow for the creation of its first two nodes as a branch" do
-        lambda { @tree.add_branch! :first, :branch }.should_not raise_error
-        @tree.nodes.should == [:first, :branch]
+      it "should create a branch and return the updated tree" do
+        @tree.add_branch!(:one, :two).should be_a RawTree
         @tree.should be_valid
+        @tree.nodes.should == [:one, :two]
       end
     end
 
-    describe "a tree that's not empty" do
+    describe "a tree containing a single node" do
       before :each do
         @tree.add_node! 1
       end
 
-      it "should not allow for disconnected branch creation" do
+      it "should not allow disconnected branch creation" do
         lambda { @tree.add_branch! 10, 11 }.should raise_error RawTreeError
       end
 
-      it "should grow up as a valid tree when populated with (connected) branches" do
+      it "should grow up as a valid tree when populated with connected branches" do
         @tree.nodes.size.should == 1
 
         @tree.add_branch! 1, 2
@@ -119,7 +117,8 @@ describe "RawTreeBuilder" do
 
         @tree.add_branch! 3, 4
         @tree.add_branch! 2, 5
-        lambda { @tree.add_branch! 5, 5 }.should raise_error RawTreeError # cycle (loop)
+        lambda { @tree.add_branch! 5, 5 }.should raise_error ForbiddenCycle
+        lambda { @tree.add_branch! 1, 5 }.should raise_error ForbiddenCycle
         @tree.add_branch! 4, 3
         @tree.add_branch! 5, 6
         @tree.nodes.size.should == 6
@@ -132,11 +131,11 @@ describe "RawTreeBuilder" do
   describe "#remove_node!" do
     describe "an empty tree" do
       it "should not allow to remove a node since there's none" do
-        lambda { @tree.remove_node! "vapornode" }.should raise_error RawTreeError
+        lambda { @tree.remove_node! "undefinedNode" }.should raise_error UndefinedNode
       end
     end
 
-    describe "a tree that's a single node" do
+    describe "a tree containing a single node" do
       before :each do
         @tree.add_node! :last
       end
@@ -148,7 +147,7 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree that is one sole branch (two nodes)" do
+    describe "a tree containing one branch" do
       before :each do
         @tree1 = RawTree.new
         @tree1.add_node! 1
@@ -171,7 +170,7 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree with more than two nodes" do
+    describe "a tree containing several branches" do
       before :each do
         # TODO: DRY this snippet
         # i stands for internal, t for terminal
@@ -189,7 +188,7 @@ describe "RawTreeBuilder" do
         lambda { @tree.remove_node! :t8 }.should_not raise_error
         @tree.nodes.size.should == 7
         @tree.nodes.should_not include :t8
-        lambda { @tree.remove_node! :i3 }.should raise_error RawTreeError
+        lambda { @tree.remove_node! :i3 }.should raise_error UndefinedNode
         @tree.should be_valid
       end
 
@@ -208,7 +207,7 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "an tree that is only one node" do
+    describe "an tree containing one node" do
       before :each do
         @tree.add_node! 1
       end
@@ -218,7 +217,7 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree with more than two nodes" do
+    describe "a tree containing several branches" do
       before :each do
         # TODO: DRY this snippet
         # i stands for internal, t for terminal
@@ -254,8 +253,8 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree with some node" do
-      it "should be aware of its node(s)" do
+    describe "a tree containing several nodes" do
+      it "should be aware of its nodes" do
         @tree.add_node! :solo
         @tree.nodes.should == [:solo]
 
@@ -274,14 +273,14 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree that's a single node" do
+    describe "a tree containing one node" do
       it "should have one terminal node" do
         @tree.add_node! 1
         @tree.terminal_nodes.should == [1]
       end
     end
 
-    describe "a populated tree" do
+    describe "a tree with several branches" do
       before :each do
         @tree.add_node! 1
         @tree.add_node! 2, 1
@@ -305,14 +304,14 @@ describe "RawTreeBuilder" do
       end
     end
 
-    describe "a tree that's one node" do
+    describe "a tree containing one node" do
       it "should not have any branch" do
         @tree.add_node! :solo
         @tree.branches.should be_empty
       end
     end
 
-    describe "a tree that's one branch (two nodes)" do
+    describe "a tree containing one branch" do
       it "should have one branch only (undirected)" do
         @tree.add_node! :one
         @tree.add_node! :two, :one
@@ -322,32 +321,5 @@ describe "RawTreeBuilder" do
         @tree.should be_valid
       end
     end
-
-    describe "a tree with n nodes" do
-      before :each do
-        # TODO: DRY this as random_tree(n = 10)
-        @n = rand(50) # number of nodes
-        @tree.add_node! @n
-        @old_node = @n
-
-        (@n - 1).times do
-          begin
-            @new_node = rand(100)
-            @tree.add_node!(@new_node, @old_node)
-          rescue RawTreeError
-            retry # cycle detected!
-          end
-          @old_node = @new_node
-        end
-      end
-
-      it "should have n - 1 branches" do
-        @tree.nodes.size.should == @n
-        @tree.branches.size.should == @n - 1
-        @tree.should be_valid
-      end
-    end
   end
-
-  # TODO: add a final test which sums it up
 end

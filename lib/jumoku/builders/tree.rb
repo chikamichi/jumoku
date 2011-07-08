@@ -20,6 +20,7 @@ module Jumoku
   #       # your stuff
   #     end
   #     tree = MyTree.new
+  #
   module TreeBuilder
     include RawTreeBuilder
 
@@ -35,9 +36,9 @@ module Jumoku
     #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [Tree] a modified copy of `self`
     # @see RawTreeBuilder#add_node!
+    #
     def add_node(n, l = nil)
-      x = self.class.new(self)
-      x.add_node!(n, l)
+      _clone.add_node!(n, l)
     end
 
     # Non destructive version {RawTreeBuilder#add_branch!} (works on a copy of the tree).
@@ -50,9 +51,9 @@ module Jumoku
     #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [Tree] a modified copy of `self`
     # @see RawTreeBuilder#add_branch!
+    #
     def add_branch(i, j = nil, l = nil)
-      x = self.class.new(self)
-      x.add_branch!(i, j, l)
+      _clone.add_branch!(i, j, l)
     end
 
     # Non destructive version of {RawTreeBuilder#remove_node!} (works on a copy of the tree).
@@ -60,9 +61,9 @@ module Jumoku
     # @param [node] n
     # @return [Tree] a modified copy of `self`
     # @see RawTreeBuilder#remove_node!
+    #
     def remove_node(n)
-      x = self.class.new(self)
-      x.remove_node!(n)
+      _clone.remove_node!(n)
     end
 
     # Non destructive version {RawTreeBuilder#remove_branch!} (works on a copy of the tree).
@@ -74,9 +75,9 @@ module Jumoku
     # @param [node] j
     # @return [Tree] a modified copy of `self`
     # @see RawTreeBuilder#remove_branch!
+    #
     def remove_branch(i, j = nil, *params)
-      x = self.class.new(self)
-      x.remove_branch!(i, j)
+      _clone.remove_branch!(i, j)
     end
 
     # Adds all specified nodes to the node set.
@@ -105,6 +106,7 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] `self`
+    #
     def add_nodes!(*a)
       a = a.flatten.expand_branches!
       if a.size == 1                                   # This allows for using << to add the root as well,
@@ -124,21 +126,22 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] a modified copy of `self`
+    #
     def add_nodes(*a)
-      x = self.class.new(self)
-      x.add_nodes!(*a)
+      _clone.add_nodes!(*a)
     end
 
     # Allows for adding consecutive nodes, each nodes being connected to their previous and
     # next neighbours.
     #
-    # You may pass {Branch branches} within the nodes.
+    # You may pass {Branch branches} within the nodes list.
     #
     #     Tree.new.add_consecutive_nodes!(1, 2, 3, :four, Branch.new(:foo, "bar")).branches
     #     # => (1=2, 2=3, 3=:four, :four=:foo, :foo="bar")
     #
     # @param [Array(nodes)] *a flat array of unique nodes
     # @return [Tree] `self`
+    #
     def add_consecutive_nodes!(*a)
       # FIXME: really this may not be as efficient as it could be.
       # We may get rid of nodes duplication (no expand_branches!)
@@ -152,9 +155,9 @@ module Jumoku
     #
     # @param [Array(nodes)] *a flat array of unique nodes
     # @return [Tree] a modified copy of `self`
+    #
     def add_consecutive_nodes(*a)
-      x = self.class.new(self)
-      x.add_consecutive_nodes!(*a)
+      _clone.add_consecutive_nodes!(*a)
     end
 
     # Adds all branches mentionned in the specified Enumerable to the branch set.
@@ -164,6 +167,7 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] `self`
+    #
     def add_branches!(*a)
       a.expand_branches!.each_nodes_pair { |pair| add_branch! pair[0], pair[1] }
       self
@@ -173,9 +177,9 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] a modified copy of `self`
+    #
     def add_branches(*a)
-      x = self.class.new(self)
-      x.add_branches!(*a)
+      _clone.add_branches!(*a)
     end
 
     # Removes all nodes mentionned in the specified Enumerable from the tree.
@@ -184,6 +188,7 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable nodes set
     # @return [Tree] `self`
+    #
     def remove_nodes!(*a)
       a.flatten.each { |v| remove_node! v }
       self
@@ -194,9 +199,9 @@ module Jumoku
     #
     # @param [#each] *a a node Enumerable set
     # @return [Tree] a modified copy of `self`
+    #
     def remove_nodes(*a)
-      x = self.class.new(self)
-      x.remove_nodes!(*a)
+      _clone.remove_nodes!(*a)
     end
     alias delete_nodes remove_nodes
 
@@ -204,6 +209,7 @@ module Jumoku
     #
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] `self`
+    #
     def remove_branches!(*a)
       a.expand_branches!.each_nodes_pair { |pair| remove_branch! pair[0], pair[1] }
       self
@@ -215,9 +221,9 @@ module Jumoku
     # @param [#each] *a an Enumerable branches set
     # @return [Tree] a modified copy of `self`
     # @see RawTreeBuilder#remove_branch!
+    #
     def remove_branches(*a)
-      x = self.class.new(self)
-      x.remove_branches!(*a)
+      _clone.remove_branches!(*a)
     end
     alias delete_branches remove_branches
 
@@ -229,6 +235,7 @@ module Jumoku
     #
     # @param [node] n
     # @return [Boolean]
+    #
     def node?(n)
       nodes.include?(n)
     end
@@ -238,6 +245,7 @@ module Jumoku
     #
     # @param [nodes]
     # @return [Boolean]
+    #
     def nodes?(*maybe_nodes)
       maybe_nodes.all? { |node| nodes.include? node }
     end
@@ -247,6 +255,7 @@ module Jumoku
     #
     # @param [nodes]
     # @return [Boolean]
+    #
     def nodes_among?(*maybe_nodes)
       maybe_nodes.any? { |node| nodes.include? node }
     end
@@ -262,6 +271,7 @@ module Jumoku
     #   @param [node] i
     #   @param [node] j
     # @return [Boolean]
+    #
     def branch?(*args)
       branches.include?(edge_convert(*args))
     end
@@ -276,6 +286,7 @@ module Jumoku
     # @param [*Branch, *nodes] *maybe_branches a list of branches, either as Branch
     #   objects or as nodes pairs
     # @return [Boolean]
+    #
     def branches?(*maybe_branches)
       list = maybe_branches.create_branches_list
       all = true
@@ -301,6 +312,7 @@ module Jumoku
     # @param [*Branch, *nodes] *maybe_branches a list of branches, either as Branch
     #   objects or as nodes pairs
     # @return [Boolean]
+    #
     def branches_among?(*maybe_branches)
       list = maybe_branches.create_branches_list
       all = true
@@ -320,6 +332,7 @@ module Jumoku
     # Number of nodes.
     #
     # @return [Integer]
+    #
     def num_nodes
       nodes.size
     end
@@ -328,6 +341,7 @@ module Jumoku
     # Number of branches.
     #
     # @return [Integer]
+    #
     def num_branches
       branches.size
     end

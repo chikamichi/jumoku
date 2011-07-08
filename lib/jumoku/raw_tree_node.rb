@@ -1,12 +1,11 @@
 module Jumoku
   module RawTree
-
-    # This module describes a raw tree node.
+    # This module describes RawTree nodes.
     #
-    # You can include it in a class of your own to make it act
-    # as a raw tree node, while customizing behaviors.
+    # You may also use this module as a mixin to have a class behave
+    # as a RawTree node, while customizing behaviors.
+    #
     module Node
-
       # Creates a new node.
       #
       # @param [#to_s, #to_sym] name a valid name, considering the :names_as options
@@ -15,6 +14,7 @@ module Jumoku
       # @param [Array(#to_s)] children an array of children nodes ids
       #
       # @return [OpenObject] the node as an OpenObject instance
+      #
       def create name, data = OpenObject.new, children = []
         @name = name
         @data = data
