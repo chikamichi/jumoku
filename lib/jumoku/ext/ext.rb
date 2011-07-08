@@ -42,9 +42,15 @@ class Array
     self.create_pairs.flatten(1)
   end
 
-  def create_branches_list
+  # Create a list of branches object based on an expandable array of nodes.
+  #
+  # TODO: refacto, it's painful having to pass the branch_type
+  #
+  # @param [DirectedBranch, UndirectedBranch] branch_type
+  #
+  def create_branches_list(branch_type)
     branches = []
-    self.expand_branches!.each_by(2) { |pair| branches << Jumoku::Branch.new(pair[0], pair[1]) }
+    self.expand_branches!.each_by(2) { |pair| branches << branch_type.new(pair[0], pair[1]) }
     branches
   end
 end

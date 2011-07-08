@@ -1,17 +1,8 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require 'spec_helper'
 
-# The RawTree builder implements TreeAPI and ensures the tree
-# is a valid tree as far as Graph Theory is concerned:
-# a tree is an undirected, connected, acyclic graph.
-#
-# Note: these tests may make use of the "root"/"children" terminology.
-# Be aware this has got *no* structural meaning as a tree is, by
-# definition, undirected. Those terms are used only to simplify
-# nodes creation within the tests, so I recall who branched who.
-# For tests about rooted tree, see arborescence_spec.rb
-describe "RawTreeBuilder" do
+describe RawUndirectedTree do
   before :each do
-    @tree = RawTree.new
+    @tree = RawUndirectedTree.new
   end
 
   describe "#new" do
@@ -57,7 +48,7 @@ describe "RawTreeBuilder" do
 
         @tree.add_node! "child2", "root"
         @tree.add_node! "grand-child1", "child2"
-        @tree.add_node! Jumoku::Branch.new("grand-child2", "child2")
+        @tree.add_node! Jumoku::UndirectedBranch.new("grand-child2", "child2")
 
         @tree.nodes.size.should == 5
         @tree.nodes.should == ["root", "child1", "child2", "grand-child1", "grand-child2"]
@@ -88,7 +79,7 @@ describe "RawTreeBuilder" do
   describe "#add_branch!" do
     describe "an empty tree" do
       it "should create a branch and return the updated tree" do
-        @tree.add_branch!(:one, :two).should be_a RawTree
+        @tree.add_branch!(:one, :two).should be_a RawUndirectedTree
         @tree.should be_valid
         @tree.nodes.should == [:one, :two]
       end
@@ -149,10 +140,10 @@ describe "RawTreeBuilder" do
 
     describe "a tree containing one branch" do
       before :each do
-        @tree1 = RawTree.new
+        @tree1 = RawUndirectedTree.new
         @tree1.add_node! 1
         @tree1.add_node! 2, 1
-        @tree2 = RawTree.new
+        @tree2 = RawUndirectedTree.new
         @tree2.add_node! 1
         @tree2.add_node! 2, 1
       end
@@ -239,7 +230,7 @@ describe "RawTreeBuilder" do
         @tree.has_branch?(:i1, :t8).should be_false
         @tree.should be_valid
 
-        @tree.remove_branch! Branch.new(:i5, :t7)
+        @tree.remove_branch! UndirectedBranch.new(:i5, :t7)
         @tree.has_branch?(:i5, :t7).should be_false
         @tree.should be_valid
       end
@@ -316,8 +307,7 @@ describe "RawTreeBuilder" do
         @tree.add_node! :one
         @tree.add_node! :two, :one
         @tree.branches.size.should == 1
-        @tree.branches.first.class.should == Plexus::Edge # the Jumoku::Branch class is just
-                                                          # a lazy wrapper of it
+        @tree.branches.first.class.should == Plexus::Edge
         @tree.should be_valid
       end
     end

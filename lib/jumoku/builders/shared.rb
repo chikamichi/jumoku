@@ -1,45 +1,16 @@
 module Jumoku
-  # This module provides the basic routines needed to implement the specialized builders:
-  # {TreeBuilder}, {BinaryTreeBuilder}, … each of them streamlining {RawTreeBuilder}'s
-  # behavior. Those implementations are under the control of the {TreeAPI}.
+  # This module provides the basic routines needed to implement the specialized
+  # builders: {UndirectedTreeBuilder} and {DirectedTreeBuilder}. Those
+  # implementations are under the control of the {TreeAPI}.
   #
-  # A {RawTree} sticks to the standard definition of trees in Graph Theory: undirected,
-  # connected, acyclic graphs. Using Plexus::UndirectedGraphBuilder as its backend,
-  # {RawTreeBuilder} ensures the two remaining constraints are satisfied (connected and
-  # acyclic). {RawTreeBuilder RawTree} offers limited functionalities, therefore the main
-  # tree structure you'll likely to use is its extended version, {TreeBuilder Tree}. A
-  # {Tree} share the same behavior but is a fully-fledged object with user-friendly public
-  # methods built upon {RawTree}'s internals.
-  #
-  # Note that a node can be any Object. There is no "node type", therefore arguments which
-  # are expected to be nodes are simply labelled as "`node`" within this documentation. A
-  # nice object type to use as a node may be an OpenStruct or an
-  # [OpenObject](http://facets.rubyforge.org/apidoc/api/more/classes/OpenObject.html)
-  # (from the Facets library), both turning nodes into versatile handlers.
-  #
-  # This builder defines a few methods not required by the API so as to maintain consistency
-  # in the DSL.
-  module RawTreeBuilder
-    include Plexus::UndirectedGraphBuilder
-
-    # This method is called by the specialized implementations upon tree creation.
-    #
-    # Initialization parameters can include:
-    #
-    # * an array of branches to add
-    # * one or several trees to copy (will be merged if multiple)
-    #
-    # @param *params [Hash] the initialization parameters
-    # @return [RawTree]
-    #
-    def initialize(*params)
-      class << self
-        self
-      end.module_eval do
-        # Ensure the builder abides by its API requirements.
+  module Shared
+    def self.included(base)
+      base.class_eval do
+        # Late aliasing as it references methods provided by Plexus modules.
+        alias has_node? has_vertex?
+        alias has_branch? has_edge?
         include TreeAPI
       end
-      super(*params) # Delegates to Plexus.
     end
 
     # Adds the node to the tree.
@@ -56,7 +27,7 @@ module Jumoku
     def add_node! u, v = nil
       if nodes.empty?
         add_vertex! u
-      elsif u.is_a? Branch
+      elsif u.is_a? _branch_type
         add_branch! u
       elsif not v.nil?
         add_branch! u, v
@@ -88,7 +59,7 @@ module Jumoku
       end
 
       # TODO: DRY this up.
-      if u.is_a? Branch
+      if u.is_a? _branch_type
         v = u.target
         u = u.source
       end
@@ -137,7 +108,7 @@ module Jumoku
     #   @param [Branch] b
     # @return [RawTree] self
     def remove_branch! u, v = nil
-      if u.is_a? Branch
+      if u.is_a? _branch_type
         v = u.target
         u = u.source
       end
@@ -179,14 +150,13 @@ module Jumoku
     # @return [Array(node)] only terminal nodes (empty array if no terminal nodes,
     #   but should never happen in a tree).
     def terminal_nodes
-      nodes.inject([]) do |t_nodes, node|
-        t_nodes << node if terminal?(node)
-        t_nodes # must return t_nodes explicitily because
-                # (rubydoc Enumerable#inject) "at each step, memo is set to the value returned by the block"
-                # (sets t_nodes to nil otherwise).
+      nodes.inject([]) do |terminals, node|
+        terminals << node if terminal?(node)
+        terminals
       end
     end
     alias boundaries terminal_nodes
+    alias leaves terminal_nodes
 
     # The branches of the tree in a 1D array.
     #
@@ -194,10 +164,6 @@ module Jumoku
     def branches
       edges
     end
-
-    # Aliasing.
-    alias has_node? has_vertex?
-    alias has_branch? has_edge?
 
     # Tree helpers.
 
@@ -225,6 +191,7 @@ module Jumoku
       end
     end
     alias has_terminal_node? terminal?
+    alias leaf? terminal?
 
     # Is the tree empty?
     #

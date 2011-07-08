@@ -1,15 +1,6 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require 'spec_helper'
 
-# The Tree builder extends the core functionalities provided
-# by RawTreeBuilder.
-#
-# Note: these tests may make use of the "root"/"children" terminology.
-# Be aware this has got *no* structural meaning as a tree is, by
-# definition, undirected. Those terms are used only to simplify
-# nodes creation within the tests, so I recall who branched who.
-# For tests about rooted tree, see arborescence_spec.rb
-#
-describe "TreeBuilder" do
+describe Tree do
   before :each do
     @tree = Tree.new
   end
@@ -151,11 +142,11 @@ describe "TreeBuilder" do
         @tree.nodes.should == [1, 2, 3, 4]
         @tree.should be_valid
 
-        @tree.add_nodes! Branch.new(5, 2)
+        @tree.add_nodes! UndirectedBranch.new(5, 2)
         @tree.nodes.should == [1, 2, 3, 4, 5]
         @tree.should be_valid
 
-        @tree.add_nodes! 3,4, 1,10, Branch.new(10, 11), -1,1
+        @tree.add_nodes! 3,4, 1,10, UndirectedBranch.new(10, 11), -1,1
         @tree.nodes.size.should == 8
         @tree.should be_valid
 
@@ -178,12 +169,12 @@ describe "TreeBuilder" do
         new_tree.nodes.should == [1, 2, 3, 4]
         new_tree.should be_valid
 
-        new_tree = @tree.add_nodes Branch.new(4, 5)
+        new_tree = @tree.add_nodes UndirectedBranch.new(4, 5)
         @tree.should be_empty
         new_tree.nodes.should == [4, 5]
         new_tree.should be_valid
 
-        new_tree = @tree.add_nodes 3,4, 4,10, Branch.new(10, 11), -1,3
+        new_tree = @tree.add_nodes 3,4, 4,10, UndirectedBranch.new(10, 11), -1,3
         @tree.should be_empty
         new_tree.nodes.size.should == 5
         new_tree.should be_valid
@@ -201,11 +192,11 @@ describe "TreeBuilder" do
   describe "#add_branches!" do
     describe "an empty tree" do
       it "should allow for adding its first branches" do
-        @tree.add_branches! Branch.new(1, 2), 1,3, 3,4
+        @tree.add_branches! UndirectedBranch.new(1, 2), 1,3, 3,4
         @tree.nodes.should == [1, 2, 3, 4]
         @tree.should be_valid
 
-        branch = Branch.new(1, 4)
+        branch = UndirectedBranch.new(1, 4)
         lambda { @tree.add_branches! branch }.should raise_error, RawTreeError
       end
     end
@@ -220,11 +211,11 @@ describe "TreeBuilder" do
         @tree.nodes.should == [1, 2, 3]
         @tree.should be_valid
 
-        @tree.add_branches! Branch.new(0,1), 3,4, Branch.new(4,5)
+        @tree.add_branches! UndirectedBranch.new(0,1), 3,4, UndirectedBranch.new(4,5)
         [0..5].all? { |n| @tree.nodes.include? n } and @tree.nodes.size.should == 5
         @tree.should be_valid
 
-        lambda { @tree.add_branches! Branch.new(2, 5) }.should raise_error, RawTreeError
+        lambda { @tree.add_branches! UndirectedBranch.new(2, 5) }.should raise_error, RawTreeError
       end
     end
   end
@@ -232,7 +223,7 @@ describe "TreeBuilder" do
   describe "add_branches" do
     describe "an empty tree" do
       it "should create a new, valid tree populated with its first branches" do
-        b1, b2, b3 = Branch.new(1, 2), Branch.new(2, 3), Branch.new(3, 4)
+        b1, b2, b3 = UndirectedBranch.new(1, 2), UndirectedBranch.new(2, 3), UndirectedBranch.new(3, 4)
         new_tree = @tree.add_branches b1, b2, b3
         @tree.should be_empty
         new_tree.nodes.should == [1, 2, 3, 4]
@@ -248,13 +239,13 @@ describe "TreeBuilder" do
       end
 
       it "should create a new, valid tree extended with its new branches" do
-        new_tree = @tree.add_branches 4, :five, Branch.new(:five, "six")
+        new_tree = @tree.add_branches 4, :five, UndirectedBranch.new(:five, "six")
         @tree.nodes.should == (1..4).to_a
         new_tree.nodes.should == [1, 2, 3, 4, :five, "six"]
         new_tree.should be_valid
 
         lambda { @tree.add_branches 10, 11 }.should   raise_error, RawTreeError
-        lambda { @tree.add_branches Branch.new 1,4 }.should     raise_error, RawTreeError
+        lambda { @tree.add_branches UndirectedBranch.new 1,4 }.should     raise_error, RawTreeError
       end
     end
   end
@@ -321,7 +312,7 @@ describe "TreeBuilder" do
   describe "#remove_branches!" do
     describe "an empty tree" do
       it "should not allow for removing branches" do
-        lambda { @tree.remove_branches Branch.new(:foo, :bar), 1,2 }.should raise_error, RawTreeError
+        lambda { @tree.remove_branches UndirectedBranch.new(:foo, :bar), 1,2 }.should raise_error, RawTreeError
       end
     end
 
@@ -341,11 +332,11 @@ describe "TreeBuilder" do
       end
 
       it "should allow for removing branches until it has no more branches or a sole node" do
-        @tree.remove_branches! 1,2, Branch.new(2,3), 3,4
+        @tree.remove_branches! 1,2, UndirectedBranch.new(2,3), 3,4
         @tree.should be_empty
         @tree.should be_valid
 
-        lambda { @tree.remove_branches! Branch.new(:foo, :bar), Branch.new(1, 2) }.should raise_error, RawTreeError
+        lambda { @tree.remove_branches! UndirectedBranch.new(:foo, :bar), UndirectedBranch.new(1, 2) }.should raise_error, RawTreeError
       end
     end
   end
@@ -353,7 +344,7 @@ describe "TreeBuilder" do
   describe "#remove_branches" do
     describe "an empty tree" do
       it "should not allow for removing branches" do
-        lambda { @tree.remove_branches :foo, :bar, Branch.new(1, 2) }.should raise_error, RawTreeError
+        lambda { @tree.remove_branches :foo, :bar, UndirectedBranch.new(1, 2) }.should raise_error, RawTreeError
       end
     end
 
@@ -373,12 +364,12 @@ describe "TreeBuilder" do
       end
 
       it "should allow for removing branches until it has no more branches or a sole node, creating a new, valid tree" do
-        new_tree = @tree.remove_branches 1,2, Branch.new(2,3), 3,4
+        new_tree = @tree.remove_branches 1,2, UndirectedBranch.new(2,3), 3,4
         @tree.nodes.should == [1, 2, 3, 4]
         new_tree.should be_empty
         new_tree.should be_valid
 
-        lambda { @tree.remove_branches Branch.new(:foo, :bar), Branch.new(1, 2) }.should raise_error, RawTreeError
+        lambda { @tree.remove_branches UndirectedBranch.new(:foo, :bar), UndirectedBranch.new(1, 2) }.should raise_error, RawTreeError
       end
     end
   end
@@ -524,12 +515,12 @@ describe "TreeBuilder" do
   describe "#add_consecutive_nodes!" do
     describe "a tree" do
       it "should grow as a valid, populated tree if all specified nodes define a valid tree structure" do
-        @tree.add_consecutive_nodes!(1, 2, 3, :four, Branch.new(:foo, "bar"))
-        @tree.has_branches?(1,2, 2,3, Branch.new(3, :four), :four,:foo, :foo,"bar").should be_true # each specified branch exist
-        @tree.has_branches?(1,2, 2,3, Branch.new(3, :four), :four,:foo).should be_true # each specified branch exist
-        @tree.has_branches_among?(1,2, 2,3, Branch.new(3, :four), :four,:foo).should be_false # do not list every existing branch
-        @tree.has_branches_among?(1,2, 2,3, Branch.new(3, :four), :four,:foo, :foo,"bar").should be_true # list all existing branches
-        @tree.has_branches_among?(1,2, 2,3, Branch.new(3, :four), :four,:foo, :foo,"bar", Array.new, "NIL").should be_true # list all existing branches
+        @tree.add_consecutive_nodes!(1, 2, 3, :four, UndirectedBranch.new(:foo, "bar"))
+        @tree.has_branches?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo, :foo,"bar").should be_true # each specified branch exist
+        @tree.has_branches?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo).should be_true # each specified branch exist
+        @tree.has_branches_among?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo).should be_false # do not list every existing branch
+        @tree.has_branches_among?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo, :foo,"bar").should be_true # list all existing branches
+        @tree.has_branches_among?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo, :foo,"bar", Array.new, "NIL").should be_true # list all existing branches
         @tree.should be_valid
       end
     end
@@ -538,10 +529,10 @@ describe "TreeBuilder" do
   describe "#add_consecutive_nodes" do
     describe "a tree" do
       it "should create a new, valid, populated tree if all specified nodes define a valid tree structure" do
-        new_tree = @tree.add_consecutive_nodes(1, 2, 3, :four, Branch.new(:foo, "bar"))
+        new_tree = @tree.add_consecutive_nodes(1, 2, 3, :four, UndirectedBranch.new(:foo, "bar"))
         @tree.should be_empty
-        new_tree.has_branches?(1,2, 2,3, Branch.new(3, :four), :four,:foo, :foo,"bar").should be_true
-        new_tree.has_branches?(1,2, 2,3, Branch.new(3, :four), :four,:foo).should be_true
+        new_tree.has_branches?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo, :foo,"bar").should be_true
+        new_tree.has_branches?(1,2, 2,3, UndirectedBranch.new(3, :four), :four,:foo).should be_true
         new_tree.should be_valid
       end
     end

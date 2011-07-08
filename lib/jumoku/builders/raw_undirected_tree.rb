@@ -1,13 +1,17 @@
 module Jumoku
-  # A {RawDirectedTree} relax the undirected constraint of trees as defined in
-  # Graph Theory. They remain connected and acyclic.
+  # A {RawUndirectedTree} sticks to the standard definition of trees in Graph Theory:
+  #  * undirected,
+  #  * connected,
+  #  * acyclic.
+  # It thus uses Plexus::UndirectedGraphBuilder as its backend, which ensure the first
+  # constraint.
   #
-  # It thus uses Plexus::DirectedGraphBuilder as its backend.
-  #
+  # {RawUndirectedTreeBuilder} ensures the two remaining constraints are satisfied.
   # It offers limited functionalities, therefore the main tree structure you'll likely to
-  # use is its extended version, {Arborescence}.
-  module RawDirectedTreeBuilder
-    include Plexus::DirectedGraphBuilder
+  # use is its extended version, {TreeBuilder}.
+  #
+  module RawUndirectedTreeBuilder
+    include Plexus::UndirectedGraphBuilder
     include Shared
 
     # This method is called by the specialized implementations upon tree creation.
@@ -18,7 +22,7 @@ module Jumoku
     # * one or several trees to copy (will be merged if multiple)
     #
     # @param *params [Hash] the initialization parameters
-    # @return enhanced Plexus::DirectedGraph
+    # @return enhanced Plexus::UndirectedGraph
     #
     def initialize(*params)
       super(*params) # Delegates to Plexus.
@@ -27,7 +31,7 @@ module Jumoku
     private
 
     def _branch_type
-      DirectedBranch
+      UndirectedBranch
     end
   end
 end
