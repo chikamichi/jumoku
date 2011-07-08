@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'core_tree_behavior'
 
-describe RawUndirectedTree do
-  subject { RawUndirectedTree.new }
+describe RawDirectedTree do
+  subject { RawDirectedTree.new }
 
   it_should_behave_like "a legacy tree" do
     let(:tree) { subject }
@@ -10,8 +10,8 @@ describe RawUndirectedTree do
     let(:branch_type) { subject.send :_branch_type }
   end
 
-  it "should allow to 'add' a reverse edge (that is, silently ignored)" do
+  it "should not allow to add a reverse arc" do
     subject.add_branch! 1, 2
-    lambda { subject.add_branch! 2, 1 }.should_not raise_error
+    lambda { subject.add_branch! 2, 1 }.should raise_error ForbiddenCycle
   end
 end

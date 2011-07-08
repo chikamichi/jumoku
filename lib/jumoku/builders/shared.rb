@@ -8,7 +8,6 @@ module Jumoku
       base.class_eval do
         # Late aliasing as it references methods provided by Plexus modules.
         alias has_node? has_vertex?
-        alias has_branch? has_edge?
         include TreeAPI
       end
     end
@@ -176,7 +175,7 @@ module Jumoku
     #
     # @return [Boolean]
     def valid?
-      acyclic? and connected? and not directed?
+      acyclic? and connected?
     end
 
     # Is the node a terminal node?

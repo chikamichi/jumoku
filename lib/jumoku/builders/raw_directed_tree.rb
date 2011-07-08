@@ -22,6 +22,21 @@ module Jumoku
     #
     def initialize(*params)
       super(*params) # Delegates to Plexus.
+      class << self; self; end.module_eval do
+        alias has_branch? has_arc?
+      end
+    end
+
+    # Checks whether the tree is *really* a valid tree, that is if the
+    # following conditions are fulfilled:
+    #
+    # * directed
+    # * acyclic
+    # * connected
+    #
+    # @return [Boolean]
+    def valid?
+      super and directed?
     end
 
     private

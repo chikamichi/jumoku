@@ -12,9 +12,6 @@ describe Tree do
     end
   end
 
-  ## The core TreeAPI is tested in raw_tree_spec.rb.
-  ## The following tests focus on methods added by TreeBuilder.
-
   describe "#add_node" do
     describe "an empty tree" do
       it "should create a new, valid tree with a single node when its first node is added" do
