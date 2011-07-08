@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.summary = %q{A fully fledged tree library for Ruby.}
   s.add_dependency "activesupport"
   s.add_dependency "facets"
+  s.add_dependency "plexus"
   s.add_development_dependency "rspec"
   s.add_development_dependency "yard"
 end
