@@ -1,4 +1,6 @@
 require File.expand_path("../../lib/jumoku.rb",  __FILE__)
+require File.expand_path("../behaviors/core_tree.rb",  __FILE__)
+require File.expand_path("../behaviors/extended.rb",  __FILE__)
 
 require 'jumoku'
 include Jumoku
