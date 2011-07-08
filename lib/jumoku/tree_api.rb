@@ -17,8 +17,9 @@ module Jumoku
     #
     def self.included(klass)
       @api_methods ||= [:add_node!, :add_branch!, :remove_node!, :remove_branch!, :nodes, :terminal_nodes, :branches]
-      ruby_18 { @api_methods.each { |m| m.to_s } }
+      ruby_18 { @api_methods.map! { |m| m.to_s } }
 
+      puts @api_methods.inspect
       @api_methods.each do |meth|
         raise JumokuError, "Must implement #{meth}" unless klass.instance_methods.include?(meth)
       end

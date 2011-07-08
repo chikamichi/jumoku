@@ -47,4 +47,5 @@ module Jumoku
   # support
   require 'jumoku/support/support'
   require 'jumoku/ext/ext'
+  require 'jukomu/support/ruby_compatibility'
 end
