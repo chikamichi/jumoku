@@ -1,14 +1,12 @@
 module Jumoku
   # This module provides the basic routines needed to implement the specialized
-  # builders: {UndirectedTreeBuilder} and {DirectedTreeBuilder}. Those
-  # implementations are under the control of the {TreeAPI}.
+  # builders: {UndirectedTreeBuilder} and {DirectedTreeBuilder}.
   #
   module Shared
     def self.included(base)
       base.class_eval do
         # Late aliasing as it references methods provided by Plexus modules.
         alias has_node? has_vertex?
-        include TreeAPI
       end
     end
 

@@ -23,8 +23,7 @@ require 'plexus'
 # (from the Facets library), both turning nodes into versatile handlers.
 #
 module Jumoku
-  # API, core implementations
-  autoload :TreeAPI,                  'jumoku/tree_api'
+  # core implementations
   autoload :Shared,                   'jumoku/builders/shared'
   autoload :Extended,                 'jumoku/builders/extended'
 

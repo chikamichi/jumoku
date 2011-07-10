@@ -1,5 +1,5 @@
 module Jumoku
-  # This module provides methods extending the core TreeAPI. Most of those
+  # This module provides methods extending the core implementation. Most of those
   # methods are cloning the receiver tree and perform their operation on the
   # duplicated object. Some other are helpers adding reflexivity to trees.
   # There are also a few in-place methods.
