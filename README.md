@@ -25,9 +25,9 @@ You can also extend those structures with hybrid behaviors (not Graph Theory com
 * Loopy (*not yet*): relax the *acyclic* constraint
 * Atomic (*not yet*): relax the *connected* constraint
 
-There are also strategies one may mixin:
+There are also strategies one may enable:
 
-* EdgeLabeling::Simple for a simple edge labeling scheme (increasing integer indexes), providing edges and nodes sorting facilities
+* a simple edge labeling scheme (increasing integer indexes), providing edges and nodes sorting facilities
 
 ## Basic usage
 
