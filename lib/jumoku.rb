@@ -45,7 +45,7 @@ module Jumoku
   autoload :Arborescence,             'jumoku/classes/tree_classes'
 
   # support
+  require 'jumoku/support/ruby_compatibility'
   require 'jumoku/support/support'
   require 'jumoku/ext/ext'
-  require 'jukomu/support/ruby_compatibility'
 end
