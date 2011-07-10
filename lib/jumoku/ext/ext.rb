@@ -1,3 +1,4 @@
+# FIXME: nest this into Jumoku's namespace and inherit from stdlib classes
 class Array
   # Takes a flat array of nodes pairs and yield
   # them to the block.
@@ -52,5 +53,11 @@ class Array
     branches = []
     self.expand_branches!.each_by(2) { |pair| branches << branch_type.new(pair[0], pair[1]) }
     branches
+  end
+end
+
+class String
+  def constantize
+    to_s.gsub(/(_|^)(\w)/) { $2.upcase }
   end
 end

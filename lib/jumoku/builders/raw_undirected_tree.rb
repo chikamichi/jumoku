@@ -25,8 +25,13 @@ module Jumoku
     # @return enhanced Plexus::UndirectedGraph
     #
     def initialize(*params)
+      args = (params.pop if params.last.is_a? Hash) || {}
+      strategies = _extract_strategies(args)
+
       super(*params) # Delegates to Plexus.
+
       class << self; self; end.module_eval do
+        strategies.each { |strategy| include strategy }
         alias has_branch? has_edge?
       end
     end

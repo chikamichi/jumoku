@@ -21,13 +21,13 @@ module Jumoku
     # @overload add_node!(b)
     #   @param [Branch] b Branch[node i, node j, label l = nil]; if i (j) already exists, then j (i) must not exist
     # @return [RawTree] self
-    def add_node! u, v = nil
+    def add_node! u, v = nil, l = nil
       if nodes.empty?
-        add_vertex! u
+        add_vertex! u, l
       elsif u.is_a? _branch_type
-        add_branch! u
+        add_branch! u, nil, l
       elsif not v.nil?
-        add_branch! u, v
+        add_branch! u, v, l
       else
         # Ensure the connected constraint.
         raise RawTreeError, "In order to add a node to the tree, you must specify another node to attach to."
@@ -205,6 +205,17 @@ module Jumoku
     #
     def _clone
       self.class.new(self)
+    end
+
+    def _extract_strategies(options)
+      options.inject([]) do |strategies, (k,v)|
+        begin
+          strategies << Jumoku.const_get(k.to_s.constantize).const_get(v.to_s.constantize)
+          strategies
+        rescue NameError # silently ignored
+          strategies
+        end
+      end
     end
   end
 end

@@ -2,9 +2,6 @@ require File.expand_path("../../lib/jumoku.rb",  __FILE__)
 require File.expand_path("../behaviors/core_tree.rb",  __FILE__)
 require File.expand_path("../behaviors/extended.rb",  __FILE__)
 
-require 'jumoku'
-include Jumoku
-
 RSpec.configure do |config|
   # Remove this line if you don't want RSpec's should and should_not
   # methods or matchers
@@ -13,4 +10,7 @@ RSpec.configure do |config|
 
   # == Mock Framework
   config.mock_with :rspec
+
+  require 'jumoku'
+  include Jumoku
 end

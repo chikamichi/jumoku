@@ -5,6 +5,7 @@ require 'pathname'
 require 'pp'
 require 'active_support'
 require 'facets'
+require 'hashery'
 require 'plexus'
 
 # Jumoku provides you with several modules and classes to build and manipulate
@@ -42,6 +43,10 @@ module Jumoku
   autoload :RawUndirectedTree,        'jumoku/classes/tree_classes'
   autoload :Tree,                     'jumoku/classes/tree_classes'
   autoload :Arborescence,             'jumoku/classes/tree_classes'
+
+  # strategies
+  autoload :EdgeLabeling,             'jumoku/strategies/edge_labeling'
+  EdgeLabeling.autoload :Simple,      'jumoku/strategies/edge_labeling/simple'
 
   # support
   require 'jumoku/support/ruby_compatibility'
