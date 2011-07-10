@@ -40,7 +40,7 @@ module Jumoku
     #
     # @return [Boolean]
     def valid?
-      super and not directed?
+      super && !directed?
     end
 
     private

@@ -8,62 +8,47 @@ shared_examples_for "a legacy tree" do
     end
   end
 
-  # Testing TreeAPI implementation.
-
   describe "#add_node!" do
     describe "an empty tree" do
       it "should grow up as a valid tree when adding its first node" do
         tree.nodes.size.should == 0
 
-        tree.add_node! "root" # adding a raw string as the first node
+        tree.add_node! 1 # adding a raw string as the first node
         tree.nodes.size.should == 1
-        tree.nodes.should == ["root"]
+        tree.nodes.should == [1]
       end
     end
 
     describe "a tree with only one node" do
       before :each do
-        # remember, this 'root' thing retain no particular meaning, it's just a raw string
-        # and I could have written "Joe" instead
-        tree.add_node! "root"
+        tree.add_node! 1
       end
 
       it "should raise an error when trying to add a new, disconnected node" do
         # again, I'll use childX for the sake of this specs, as it is easy to
         # remember, but the node is not really a "child" of the previous node,
         # it is just connected
-        lambda { tree.add_node! "child1" }.should raise_error
+        lambda { tree.add_node! 2 }.should raise_error
       end
 
       it "should grow up as a valid tree when adding new, connected nodes" do
-        lambda { tree.add_node! "child1", "root" }.should_not raise_error
+        lambda { tree.add_node! 2, 1 }.should_not raise_error
 
-        tree.add_node! "child2", "root"
-        tree.add_node! "grand-child1", "child2"
-        tree.add_node! branch_type.new("grand-child2", "child2")
-
-        tree.nodes.size.should == 5
-        tree.nodes.should == ["root", "child1", "child2", "grand-child1", "grand-child2"]
-
-        tree.add_node! "grand-grand-child1", "grand-child1"
-        tree.add_node! "child3", "root"
-        tree.add_node! "grand-child3", "child3"
-        tree.add_node! "grand-grand-grand-child", "grand-grand-child1"
+        tree.add_node! 3, 1
+        tree.add_node! 1, 4
+        tree.add_node! branch_type.new(3, 5)
 
         tree.should be_valid
+        tree.nodes.size.should == 5
+        tree.nodes.sort.should == [1,2,3,4,5]
       end
 
       it "should raise an error when trying to form a cycle" do
-        tree.add_node! "child1", "root"
-        tree.add_node! "child2", "root"
-        tree.add_node! "grand-child", "child1"
+        tree.add_node! 2, 1
+        tree.add_node! 3, 1
+        tree.add_node! 4, 2
 
-        lambda { tree.add_node! "grand-child", "child2" }.should raise_error ForbiddenCycle
-
-        tree.add_node! "grand-grand-child", "grand-child"
-
-        lambda { tree.add_node! "grand-grand-child", "child1" }.should raise_error ForbiddenCycle
-        lambda { tree.add_node! "grand-grand-child", "child2" }.should raise_error ForbiddenCycle
+        lambda { tree.add_node! 4, 1 }.should raise_error ForbiddenCycle
       end
     end
   end
@@ -92,11 +77,11 @@ shared_examples_for "a legacy tree" do
         tree.add_branch! 1, 2
         tree.nodes.should_not be_empty
         tree.nodes.size.should == 2
-        tree.nodes.should == [1, 2]
+        tree.nodes.sort.should == [1, 2]
 
         tree.add_branch! 2, 3
         tree.nodes.size.should == 3
-        tree.nodes.should == [1, 2, 3]
+        tree.nodes.sort.should == [1, 2, 3]
 
         tree.add_branch! 3, 4
         tree.add_branch! 2, 5
@@ -104,7 +89,7 @@ shared_examples_for "a legacy tree" do
         lambda { tree.add_branch! 1, 5 }.should raise_error ForbiddenCycle
         tree.add_branch! 5, 6
         tree.nodes.size.should == 6
-        tree.nodes.should == [1, 2, 3, 4, 5, 6]
+        tree.nodes.sort.should == [1, 2, 3, 4, 5, 6]
         tree.should be_valid
       end
     end
@@ -138,7 +123,7 @@ shared_examples_for "a legacy tree" do
       it "should allow to remove both nodes in any order" do
         tree.remove_node! 1
         tree.should be_valid
-        tree.nodes.should == [2]
+        tree.nodes.sort.should == [2]
         tree.should be_valid
       end
     end
@@ -265,7 +250,7 @@ shared_examples_for "a legacy tree" do
 
         tree.add_node! 4, 3
         tree.add_node! 5, 3
-        tree.terminal_nodes.should == [1, 4, 5]
+        tree.terminal_nodes.sort.should == [1, 4, 5]
       end
     end
   end
