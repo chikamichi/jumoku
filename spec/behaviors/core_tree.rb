@@ -56,9 +56,9 @@ shared_examples_for "a legacy tree" do
   describe "#add_branch!" do
     describe "an empty tree" do
       it "should create a branch and return the updated tree" do
-        tree.add_branch!(:one, :two).should be_a tree_type
+        tree.add_branch!(1, 2).should be_a tree_type
         tree.should be_valid
-        tree.nodes.should == [:one, :two]
+        tree.nodes.sort.should == [1, 2]
       end
     end
 
@@ -213,12 +213,12 @@ shared_examples_for "a legacy tree" do
 
     describe "a tree containing several nodes" do
       it "should be aware of its nodes" do
-        tree.add_node! :solo
-        tree.nodes.should == [:solo]
+        tree.add_node! 1
+        tree.nodes.sort.should == [1]
 
-        tree.add_branch! 2, :solo
+        tree.add_branch! 2, 1
         tree.add_branch! 2, 3
-        tree.nodes.should == [:solo, 2, 3]
+        tree.nodes.sort.should == [1, 2, 3]
         tree.should be_valid
       end
     end
