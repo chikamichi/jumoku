@@ -290,17 +290,11 @@ module Jumoku
     #
     def branches_among?(*maybe_branches)
       list = maybe_branches.create_branches_list(_branch_type)
-      all = true
-
-      # Branch objects are really Edge objects within Plexus, therefore
-      # cannot rely on #eql? to compare those structures and must drop
-      # down to the attributes.
-      branches.each do |e| # Plexus::Edge structs
-        all = list.any? do |b| # Jumoku::Branch structs
-          (b[:source] == e[:source]) and (b[:target] == e[:target])
+      branches.all? do |branch|
+        list.any? do |maybe_branch|
+          branch == maybe_branch
         end
       end
-      all
     end
     alias has_branches_among? branches_among?
 
