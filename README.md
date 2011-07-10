@@ -2,27 +2,32 @@
 
 ## Synopsis
 
-Jumoku provides you with tree structures and related tools to perform manipulation and computation the easy way. Trees are a subset of graphs, which are used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games and AI designs, … Trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance.
+Jumoku provides you with tree structures and related tools to perform manipulation and computation, the easy way. Trees are frequently used to mimic hierarchal structures such as filesystems, or modelize decisionnal patterns, for instance.
 
 Jumoku is built upon [Plexus](http://github.com/chikamichi/plexus "Plexus on Github"), a ruby-powered Graph Theory library, and aims at being a fully-fledged, pithy solution for tree-like structures managment. See below for additionnal information about graphs, trees, arborescences, why they're different and how to make good use of them.
 
 ## A few words about *trees*
 
-A Tree is a graph subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. A tree is not compelled to have a root node and leaves as you may think *prima facie*. Trees with such features are called arborescences and Jumoku has support for them, too.
+A Tree is a graph subject to three basic constraints: nodes are all connected, they must not form any loop, and the branches binding nodes have no preferential direction. Trees are an important subset of graphs used in a whole slew of computer science and mathematical problems: network modelization, datasets storage, scientific computation, load balancing, games, AI designs, etc. They however are not limited to directed patterns: a tree is not compelled to have a "root" node, nor to have "leaves" as you may think *prima facie*. Trees with such features are called arborescences and Jumoku has support for them, too.
 
 Jumoku (*currently under early development stage*) provides you with the following structures:
 
-* RawTree: a tree-graph with only basic features
-* **Tree**: a tree-graph with extended features built upon RawTree. That's what you'd want to use as a basic tree structure
+* RawUndirectedTree: a pure tree-graph with only basic features
+* RawDirectedTree: a tree that's an arborescence, that is, a tree with a flow from its root to its leaf nodes
+* **Tree**: a tree-graph with extended features built upon RawUndirectedTree. That's what you'd want to use as a fully-fledged tree structure
+* **Arborescence**: an arbo-graph with extended features built upon RawDirectedTree. That's what you'd want to use as a fully-fledged arborescence structure
 * AVLTree (*not yet*)
 * RedBlackTree (*not yet*)
-* **Arborescence** (*not yet*): the structure everybody thinks of when asked about "trees", with a root, internal nodes and leaves
 
 You can also extend those structures with hybrid behaviors (not Graph Theory compliant but may be useful):
 
 * Directed (*not yet*): relax the *undirected* constraint
 * Loopy (*not yet*): relax the *acyclic* constraint
 * Atomic (*not yet*): relax the *connected* constraint
+
+There are also strategies one may mixin:
+
+* EdgeLabeling::Simple for a simple edge labeling scheme (increasing integer indexes), providing edges and nodes sorting facilities
 
 ## Basic usage
 
@@ -42,7 +47,7 @@ tree = Jumoku::Tree.new
 
 ``` ruby
 class MyTree
-  include Jumoku::RawTreeBuilder
+  include Jumoku::TreeBuilder
 end
 tree = MyTree.new
 ```
@@ -51,7 +56,7 @@ The RawTree class is actually implemented this way.
 
 ### What you get
 
-`tree` is now a Tree object, shipping with some default options:
+Following the previous code example, `tree` is now a Tree object, shipping with some default options:
 
 * it is a valid tree *per se* (an undirected, acyclic, connected graph)
 * Jumoku API's methods will ensure it remains so as you manipulate it
