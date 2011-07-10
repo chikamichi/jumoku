@@ -3,6 +3,7 @@ rvm:
   - 1.9.2
   - ree
   - jruby
+  - rubinius
 script: "bundle exec rspec spec" # do not run cucumber features on Travis
 branches:
   only:
