@@ -163,11 +163,16 @@ module Jumoku
     #
     # The process relies on {RawTreeBuilder#remove_node! remove_node!}.
     #
-    # @param [#each] *a an Enumerable nodes set
+    # @param [#each] *nodes an Enumerable nodes set; may contain Range
     # @return [Tree] `self`
     #
-    def remove_nodes!(*a)
-      a.flatten.each { |v| remove_node! v }
+    # @example
+    #
+    #   remove_nodes! 1, 3..5
+    #
+    def remove_nodes!(*nodes)
+      nodes = nodes.to_a.map { |i| i.is_a?(Range) ? i.to_a : i }.flatten
+      nodes.each { |v| remove_node! v }
       self
     end
     alias delete_nodes! remove_nodes!
