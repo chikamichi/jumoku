@@ -153,7 +153,6 @@ module Jumoku
       end
     end
     alias boundaries terminal_nodes
-    alias leaves terminal_nodes
 
     # The branches of the tree in a 1D array.
     #
@@ -164,10 +163,9 @@ module Jumoku
 
     # Tree helpers.
 
-    # Checks whether the tree is *really* a valid tree, that is if the
-    # following conditions are fulfilled:
+    # Checks whether the tree is a valid tree (directed or undirected), that is
+    # if the following conditions are fulfilled:
     #
-    # * undirected
     # * acyclic
     # * connected
     #
