@@ -180,12 +180,9 @@ module Jumoku
     #
     # @return [Boolean]
     def terminal? u
-      if has_node? u
-        # root is always terminal, otherwise check whether degree is unitary
-        nodes == [u] ? true : (degree(u) == 1)
-      else
-        raise UndefinedNode, "Not a node of this tree."
-      end
+      raise UndefinedNode, "Not a node of this tree." unless has_node? u
+      return true if (1..2).include? nodes.size
+      degree(u) == 1
     end
     alias has_terminal_node? terminal?
     alias leaf? terminal?
