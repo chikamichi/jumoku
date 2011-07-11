@@ -14,6 +14,20 @@ describe Arborescence do
 
   it_should_behave_like "a tree with extended features"
 
+  context "root helpers" do
+    before :each do
+      tree.add_branches! 1,2, 2,3, 1,4, 4,5, 4,6
+    end
+
+    it "#root should return the root node" do
+      tree.root.should == 1
+    end
+
+    it "#root_edge(s) should return the edge(s) branched from the root" do
+      tree.root_edges.size.should == 2
+    end
+  end
+
   context "leaf nodes inspection" do
     before :each do
       tree.add_branches! 1,2, 2,3, 1,4, 1,5

@@ -8,6 +8,15 @@ module Jumoku
     include RawDirectedTreeBuilder
     include Extended
 
+    def root
+      return nodes.first if nodes.size == 1
+      nodes.find { |node| in_degree(node) == 0 && out_degree(node) > 0 }
+    end
+
+    def root_edges
+      adjacent(root, :type => :edges)
+    end
+
     def leaves
       terminal_nodes.delete_if do |node|
         out_degree(node) > 0

@@ -31,9 +31,18 @@ module Jumoku
       #
       # @return [Array]
       #
-      def sort_edges(&block)
+      def sorted_edges(&block)
         return super(&block) if block_given?
-        edges.sort { |a,b| a.label._weight <=> b.label._weight }
+        _sort_edges(edges)
+      end
+
+      # Sort a set of edges.
+      #
+      # @param [Array]
+      # @return [Array]
+      #
+      def sort_edges(set)
+        _sort_edges(set)
       end
 
       # Only for directed trees.
@@ -69,6 +78,10 @@ module Jumoku
         self.next_simple_edge_label_number ||= 0
         self.next_simple_edge_label_number += 1
         super
+      end
+
+      def _sort_edges(set)
+        set.sort { |a,b| a.label._weight <=> b.label._weight }
       end
     end
   end

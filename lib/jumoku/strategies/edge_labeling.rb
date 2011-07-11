@@ -7,7 +7,7 @@ module Jumoku
       #
       # @return [Array]
       #
-      def sort_edges(&block)
+      def sorted_edges(&block)
         return edges.sort_by { |edge| block.call(edge) } if block_given?
         edges
       end

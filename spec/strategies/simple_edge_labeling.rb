@@ -25,18 +25,25 @@ describe EdgeLabeling::Simple do
       tree.edges.map { |e| e.label._weight }.sort.should == [1,2,3,5]
     end
 
-    describe "#sort_edges" do
+    describe "#sorted_edges" do
       it "should by default return the list of edges in (increasing) order" do
         tree.add_branches! 1,2, 1,3, 2,4, 1,5, 3,6, 1,7
-        tree.sort_edges.map { |e| e.label._weight }.should == (0..5).to_a
+        tree.sorted_edges.map { |e| e.label._weight }.should == (0..5).to_a
       end
 
       it "should accept a block to sort edges" do
         # for the sake of this specs, one'd actually #reverse the default sorting ;)
         tree.add_branches! 1,2, 1,3, 2,4, 1,5, 3,6, 1,7
-        tree.sort_edges do |edge|
+        tree.sorted_edges do |edge|
           -edge.label._weight
         end.map { |e| e.label._weight }.should == (0..5).to_a.reverse
+      end
+    end
+
+    describe "#sort_edges" do
+      it "should sort a set of edges using the simple scheme" do
+        tree.add_branches! 1,2, 1,3, 2,4, 1,5, 3,6, 1,7
+        tree.sort_edges(tree.adjacent(1, :type => :edges)).map { |e| e.target }.should == [2,3,5,7]
       end
     end
 

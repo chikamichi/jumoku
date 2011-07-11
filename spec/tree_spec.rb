@@ -7,8 +7,10 @@ describe Tree do
   let(:branch_type) { subject.send :_branch_type }
 
   it_should_behave_like "a legacy tree"
+
   it "should be a undirected graph" do
     tree.class.ancestors.should include RawUndirectedTreeBuilder
   end
+
   it_should_behave_like "a tree with extended features"
 end
