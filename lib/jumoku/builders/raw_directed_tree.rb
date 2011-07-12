@@ -21,10 +21,10 @@ module Jumoku
     # @return enhanced Plexus::DirectedGraph
     #
     def initialize(*params)
-      args = (params.pop if params.last.is_a? Hash) || {}
-      strategies = _extract_strategies(args)
-
       super(*params) # Delegates to Plexus.
+      args = (params.pop if params.last.is_a? Hash) || {}
+      @_options = args
+      strategies = _extract_strategies(args)
 
       class << self; self; end.module_eval do
         strategies.each { |strategy| include strategy }

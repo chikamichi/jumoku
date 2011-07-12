@@ -3,12 +3,16 @@ module Jumoku
   # builders: {UndirectedTreeBuilder} and {DirectedTreeBuilder}.
   #
   module Shared
+    STRATEGIES = [:edge_labeling, :node_labeling]
+
     def self.included(base)
       base.class_eval do
         # Late aliasing as it references methods provided by Plexus modules.
         alias has_node? has_vertex?
       end
     end
+
+    attr_accessor :_options
 
     # Adds the node to the tree.
     #
@@ -208,6 +212,7 @@ module Jumoku
     end
 
     def _extract_strategies(options)
+      options = options.dup.select! { |k,v| STRATEGIES.include?(k) } || options.dup
       options.inject([]) do |strategies, (k,v)|
         begin
           strategies << Jumoku.const_get(k.to_s.constantize).const_get(v.to_s.constantize)
