@@ -1,5 +1,13 @@
 module Jumoku
+  # Edge labeling strategies are concerned with the way edges or arcs are
+  # labeled. Simple labeling schemes are based on indexing with increasing
+  # integers, whereas some other strategies elaborate on notions such as
+  # weight or symetry.
+  #
   module EdgeLabeling
+    # This module provides basic implementation for the common ground used
+    # by custom strategies.
+    #
     module Backend
       # Sort edges by the provided block's logic. The block takes edge as
       # parameter, and this method delegates to Enumerable#sort_by for

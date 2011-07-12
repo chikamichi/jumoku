@@ -4,6 +4,17 @@ module Jumoku
   # It provides a directed tree which acts as a hierarchical structure, known
   # as an arborescence.
   #
+  # By default, it is ensured that new arcs remain in the same general flow
+  # direction, based on the first arc added (binding the node known as root
+  # to its first children, known as leaf). This constraint may be relaxed by
+  # passing the `:free_flow` option to true when initializing:
+  #
+  #     Arborescence.new(:free_flow => true)
+  #
+  # This way, the tree remains directed (nodes are bound using arcs, not
+  # undirected edges), but a node may be either a pure source (only outing
+  # arcs), a pure target (only arcs pointing at it), or a mix.
+  #
   module ArborescenceBuilder
     include RawDirectedTreeBuilder
     include Extended
@@ -137,7 +148,7 @@ module Jumoku
     alias cousins neighbours
 
     # Check whether two nodes are neighbours. To include the node's siblings
-    # in the matching candidates, pass the :siblings option to true.
+    # in the matching candidates, pass the `:siblings` option to true.
     #
     # @param [Node] node1
     # @param [Node] node2
