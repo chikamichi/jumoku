@@ -75,9 +75,8 @@ module Jumoku
     end
     alias parent_of parent
 
-    # Check whether a node is a parent. If another node is provided as
-    # second parameter, check whether the former node is the parent of the
-    # latter node.
+    # Check whether a node is a parent. If another node is provided as second
+    # parameter, check whether the former is the parent of the latter.
     #
     # @overload parent?(node)
     #   @param [Node] node

@@ -1,4 +1,4 @@
-module Jukomu
+module Jumoku
   if RUBY_VERSION < "1.9"
     def ruby_18
       yield

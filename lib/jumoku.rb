@@ -9,19 +9,33 @@ require 'hashery'
 require 'plexus'
 
 # Jumoku provides you with several modules and classes to build and manipulate
-# tree graphs. Two basic implementations are available: undirected trees
-# ({RawUndirectedTree}) and directed trees ({RawDirectedTree}).
+# tree-graphs.
 #
-# {Tree} is derived from the undirected flavour and sticks to the mathematical
-# tree definition. {Arborescence} is derived from the directed flavour and is
-# likely to be used as the basis to modelize hierarchy structures, such as a
-# family tree, a file browser…
+# A tree is a structure composed of branches binding nodes. Branches may be
+# directed (arcs) or undirected (edges). When a there is only one general
+# direction (flow), there is a root node, and one or several leaf nodes. A
+# directed, uni-flow tree where each node only branches in once and branches
+# out once is called a path. For more information on what a tree-graph is and
+# how you could make use of it, see the README.
 #
-# Note that a node can be any Object. There is no "node type", therefore
-# arguments which re expected to be nodes are simply labelled as "`node`"
-# within this documentation. A nice object type to use as a node may be an
-# OpenStruct or an [OpenObject](http://facets.rubyforge.org/apidoc/api/more/classes/OpenObject.html)
-# (from the Facets library), both turning nodes into versatile handlers.
+# Two basic implementations are available: undirected trees
+# ({RawUndirectedTree}) and directed trees ({RawDirectedTree}). They offer
+# limited features, so one will certainly drop to their civilized siblings:
+#
+#  * {Tree} is derived from an undirected tree and sticks to the mathematical
+# tree definition.
+#  * {Arborescence} is derived from a directed tree and is likely to be used
+# as the basis to modelize hierarchy structures, such as a family tree, a file
+# browser…
+#
+# A node can be any Object: there is no "node type". A nice object "type" to
+# use as a node may be an OpenStruct or an OpenHash (from the Facets library),
+# but really any object is valid.
+#
+# Jumoku allows you to enable some strategies when creating a new tree. For
+# instance, you may enable an edge/arc labeling strategy, which will cause
+# indexing of branches as they are added. Jumoku provides a few basic
+# strategies mixin, and one may implement custom ones.
 #
 module Jumoku
   # core implementations

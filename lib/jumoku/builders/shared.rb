@@ -1,6 +1,6 @@
 module Jumoku
   # This module provides the basic routines needed to implement the specialized
-  # builders: {UndirectedTreeBuilder} and {DirectedTreeBuilder}.
+  # builders: {RawUndirectedTreeBuilder} and {RawDirectedTreeBuilder}.
   #
   module Shared
     STRATEGIES = [:edge_labeling, :node_labeling]

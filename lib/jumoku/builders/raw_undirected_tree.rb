@@ -1,8 +1,10 @@
 module Jumoku
   # A {RawUndirectedTree} sticks to the standard definition of trees in Graph Theory:
+  #
   #  * undirected,
   #  * connected,
   #  * acyclic.
+  #
   # It thus uses Plexus::UndirectedGraphBuilder as its backend, which ensure the first
   # constraint.
   #

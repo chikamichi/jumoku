@@ -1,11 +1,12 @@
 module Jumoku
   # A {RawDirectedTree} relax the undirected constraint of trees as defined in
-  # Graph Theory. They remain connected and acyclic.
+  # Graph Theory. They remain connected and acyclic though.
   #
-  # It thus uses Plexus::DirectedGraphBuilder as its backend.
+  # It thus uses `Plexus::DirectedGraphBuilder` as its backend.
   #
   # It offers limited functionalities, therefore the main tree structure you'll likely to
   # use is its extended version, {Arborescence}.
+  #
   module RawDirectedTreeBuilder
     include Plexus::DirectedGraphBuilder
     include Shared
@@ -39,7 +40,8 @@ module Jumoku
     # * acyclic
     # * connected
     #
-    # @return [Boolean]
+    # @return [true, false]
+    #
     def valid?
       super and directed?
     end
