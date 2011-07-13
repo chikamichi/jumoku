@@ -39,28 +39,29 @@ require 'plexus'
 #
 module Jumoku
   # core implementations
-  autoload :Shared,                   'jumoku/builders/shared'
-  autoload :Extended,                 'jumoku/builders/extended'
+  autoload :Shared,                         'jumoku/builders/shared'
+  autoload :Extended,                       'jumoku/builders/extended'
 
   # branch types
-  autoload :UndirectedBranch,         'jumoku/support/branch'
-  autoload :DirectedBranch,           'jumoku/support/branch'
+  autoload :UndirectedBranch,               'jumoku/support/branch'
+  autoload :DirectedBranch,                 'jumoku/support/branch'
 
   # tree builders
-  autoload :RawUndirectedTreeBuilder, 'jumoku/builders/raw_undirected_tree'
-  autoload :RawDirectedTreeBuilder,   'jumoku/builders/raw_directed_tree'
-  autoload :TreeBuilder,              'jumoku/builders/tree'
-  autoload :ArborescenceBuilder,      'jumoku/builders/arborescence'
+  autoload :RawUndirectedTreeBuilder,       'jumoku/builders/raw_undirected_tree'
+  autoload :RawDirectedTreeBuilder,         'jumoku/builders/raw_directed_tree'
+  autoload :TreeBuilder,                    'jumoku/builders/tree'
+  autoload :ArborescenceBuilder,            'jumoku/builders/arborescence'
 
   # tree classes
-  autoload :RawDirectedTree,          'jumoku/classes/tree_classes'
-  autoload :RawUndirectedTree,        'jumoku/classes/tree_classes'
-  autoload :Tree,                     'jumoku/classes/tree_classes'
-  autoload :Arborescence,             'jumoku/classes/tree_classes'
+  autoload :RawDirectedTree,                'jumoku/classes/tree_classes'
+  autoload :RawUndirectedTree,              'jumoku/classes/tree_classes'
+  autoload :Tree,                           'jumoku/classes/tree_classes'
+  autoload :Arborescence,                   'jumoku/classes/tree_classes'
 
   # strategies
-  autoload :EdgeLabeling,             'jumoku/strategies/edge_labeling'
-  EdgeLabeling.autoload :Simple,      'jumoku/strategies/edge_labeling/simple'
+  autoload :Strategies,                     'jumoku/strategies'
+  Strategies.autoload :EdgeLabelingBackend, 'jumoku/strategies/edge_labeling'
+  Strategies.autoload :SimpleEdgeLabeling,  'jumoku/strategies/edge_labeling/simple'
 
   # support
   require 'jumoku/support/ruby_compatibility'

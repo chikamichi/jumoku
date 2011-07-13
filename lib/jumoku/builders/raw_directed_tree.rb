@@ -23,14 +23,8 @@ module Jumoku
     #
     def initialize(*params)
       super(*params) # Delegates to Plexus.
-      args = (params.pop if params.last.is_a? Hash) || {}
-      @_options = args
-      strategies = _extract_strategies(args)
-
-      class << self; self; end.module_eval do
-        strategies.each { |strategy| include strategy }
-        alias has_branch? has_arc?
-      end
+      @_options = (params.pop if params.last.is_a? Hash) || {}
+      _delay { alias has_branch? has_arc? }
     end
 
     # Checks whether the tree is *really* a valid tree, that is if the

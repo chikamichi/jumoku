@@ -1,5 +1,5 @@
 module Jumoku
-  module EdgeLabeling
+  module Strategies
     # A simple edge labeling strategy: as new nodes are added, new edges are
     # assigned increasing integers. Removed edges do not trigger reindexing,
     # so for a tree with n nodes, the labeling set is ||n|| but indexes are
@@ -8,8 +8,8 @@ module Jumoku
     # This simple strategy allows for using simple search algorithms as well
     # for simple ordering schemes.
     #
-    module Simple
-      include EdgeLabeling::Backend
+    module SimpleEdgeLabeling
+      include Strategies::EdgeLabelingBackend
 
       attr_accessor :next_simple_edge_label_number
 

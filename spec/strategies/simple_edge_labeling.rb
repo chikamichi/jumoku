@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe EdgeLabeling::Simple do
-  let(:tree) { Tree.new(:edge_labeling => :simple) }
-  let(:arbo) { Arborescence.new(:edge_labeling => :simple) }
+describe Strategies::SimpleEdgeLabeling do
+  let(:tree) { Tree.new.use Strategies::SimpleEdgeLabeling }
+  let(:arbo) { Arborescence.new.use :simple_edge_labeling }
 
   describe 'a tree with simple edge labeling' do
     it "should label its edges with increasing integers when new nodes are added or removed" do

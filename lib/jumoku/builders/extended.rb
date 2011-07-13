@@ -298,7 +298,7 @@ module Jumoku
     end
     alias has_branches_among? branches_among?
 
-    # Number of nodes.
+    # Number of nodes. Just `#nodes.size` really.
     #
     # @return [Integer]
     #
