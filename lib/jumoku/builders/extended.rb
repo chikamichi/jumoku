@@ -298,6 +298,14 @@ module Jumoku
     end
     alias has_branches_among? branches_among?
 
+    # Return the number of edges.
+    #
+    # @return [Integer]
+    #
+    #def size
+      #edges.size
+    #end
+
     # Number of nodes. Just `#nodes.size` really.
     #
     # @return [Integer]
@@ -315,5 +323,14 @@ module Jumoku
       branches.size
     end
     alias number_of_branches num_branches
+
+    # Check whether all nodes from a list are leaves.
+    #
+    # @param [#to_a] nodes
+    # @return [true, false]
+    #
+    def leaves?(*nodes)
+      nodes.to_a.flatten.all? { |node| leaf?(node) }
+    end
   end
 end

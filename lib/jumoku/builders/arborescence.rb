@@ -6,7 +6,7 @@ module Jumoku
   #
   # By default, it is ensured that new arcs remain in the same general flow
   # direction, based on the first arc added (binding the node known as root
-  # to its first children, known as leaf). This constraint may be relaxed by
+  # to its first offsprings, known as leaf). This constraint may be relaxed by
   # passing the `:free_flow` option to true when initializing:
   #
   #     Arborescence.new(:free_flow => true)
@@ -52,15 +52,17 @@ module Jumoku
       in_degree(node) == 0 && out_degree(node) > 0
     end
 
-    # Return the list of a node's children.
+    # Return the list of a node's offsprings.
     #
     # @param [Node] node
     # @return [Array<Node>]
     #
-    def children(parent)
+    def offsprings(parent)
       adjacent(parent)
     end
-    alias children_of children
+    alias offsprings_of offsprings
+    alias children offsprings
+    alias children_of offsprings
 
     # Return the parent node of another.
     #
@@ -88,20 +90,20 @@ module Jumoku
     #
     def parent?(node, maybe_child = nil)
       if maybe_child.nil?
-        !children(node).empty?
+        !offsprings(node).empty?
       else
-        children(node).include? maybe_child
+        offsprings(node).include? maybe_child
       end
     end
 
-    # Return the siblings for a node. Siblings are other node's parent children.
+    # Return the siblings for a node. Siblings are other node's parent offsprings.
     #
     # @param [Node] node
     # @return [Array<Node>] empty list if the node is root
     #
     def siblings(node)
       return [] if root?(node)
-      siblings = children(parent(node))
+      siblings = offsprings(parent(node))
       siblings.delete(node)
       siblings
     end
@@ -117,7 +119,7 @@ module Jumoku
       siblings(node1).include?(node2)
     end
 
-    # Return the list of a node's neighbours, that is, children of node's
+    # Return the list of a node's neighbours, that is, offsprings of node's
     # parent siblings (cousins).
     #
     # @param [Node] node
@@ -132,14 +134,14 @@ module Jumoku
 
       # special case when the node is a root's child
       if root?(parent(node))
-        nghb = children(parent(node))
+        nghb = offsprings(parent(node))
         nghb.delete_if { |child| child == node } unless options[:siblings]
         return nghb.map { |child| [child] }
       end
 
       # general case
       nghb = siblings(parent(node)).map do |sibling|
-        children(sibling)
+        offsprings(sibling)
       end
       nghb << siblings(node) if options[:siblings]
       nghb
@@ -171,22 +173,14 @@ module Jumoku
       end
     end
 
-    # Check whether a node is a leaf.
+    # Check whether a node is a leaf, that is, whether it is terminal and an
+    # offspring only.
     #
     # @param [Node]
     # @return [true, false]
     #
     def leaf?(node)
       terminal?(node) && out_degree(node) == 0
-    end
-
-    # Check whether all nodes from a list are leaves.
-    #
-    # @param [#to_a] nodes
-    # @return [true, false]
-    #
-    def leaves?(*nodes)
-      nodes.to_a.flatten.all? { |node| leaf?(node) }
     end
   end
 end

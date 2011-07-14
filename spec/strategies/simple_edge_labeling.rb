@@ -47,16 +47,16 @@ describe Strategies::SimpleEdgeLabeling do
       end
     end
 
-    it "should thus allow for local edge and children ordering (directed trees only)" do
+    it "should thus allow for local edge and offsprings ordering (directed trees only)" do
       arbo.add_branches! 1,2, 1,3, 2,4, 1,5, 3,6, 1,7
       arbo.sorted_arcs_from(1).map { |e| e.target }.should == [2,3,5,7]
-      arbo.sorted_children_of(1).should == [2,3,5,7]
+      arbo.sorted_offsprings_of(1).should == [2,3,5,7]
     end
 
     it "should return nil when asking for nodes ordering on an undirected tree" do
       tree.add_branches! 1,2, 1,3, 2,4, 1,5, 3,6, 1,7
       tree.sorted_arcs_from(1).should == nil
-      tree.sorted_children_of(1).should == nil
+      tree.sorted_offsprings_of(1).should == nil
     end
   end
 end

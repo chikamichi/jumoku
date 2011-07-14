@@ -43,6 +43,7 @@ module Jumoku
   autoload :Extended,                       'jumoku/builders/extended'
 
   # branch types
+  autoload :Branch,                         'jumoku/support/branch'
   autoload :UndirectedBranch,               'jumoku/support/branch'
   autoload :DirectedBranch,                 'jumoku/support/branch'
 

@@ -67,10 +67,11 @@ module Jumoku
       # @param [Node] node
       # @return [Array<Node>]
       #
-      def sorted_children_of(node)
+      def sorted_offsprings_of(node)
         return nil unless is_a? RawDirectedTreeBuilder
         sorted_edges_from(node).map { |edge| edge.target }
       end
+      alias sorted_children_of sorted_offsprings_of
 
       private
 

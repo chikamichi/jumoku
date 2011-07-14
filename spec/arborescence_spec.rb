@@ -56,15 +56,15 @@ describe Arborescence do
     end
   end
 
-  context "children helpers" do
+  context "offsprings helpers" do
     before :each do
       tree.add_branches! 1,2, 2,3, 1,4, 4,5, 4,6
     end
 
-    describe "#children" do
-      it "should return the list of children nodes for a node" do
-        tree.children(1).sort.should == [2,4]
-        tree.children_of(4).sort.should == [5,6]
+    describe "#offsprings" do
+      it "should return the list of offsprings nodes for a node" do
+        tree.offsprings(1).sort.should == [2,4]
+        tree.offsprings_of(4).sort.should == [5,6]
       end
     end
   end
