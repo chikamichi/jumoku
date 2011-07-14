@@ -16,18 +16,16 @@ Jumoku (*currently under early development stage*) provides you with the followi
 * RawDirectedTree: a tree that's an arborescence, that is, a tree with a flow from its root to its leaf nodes
 * **Tree**: a tree-graph with extended features built upon RawUndirectedTree. That's what you'd want to use as a fully-fledged tree structure
 * **Arborescence**: an arbo-graph with extended features built upon RawDirectedTree. That's what you'd want to use as a fully-fledged arborescence structure
-* AVLTree (*not yet*)
-* RedBlackTree (*not yet*)
 
-You can also extend those structures with hybrid behaviors (not Graph Theory compliant but may be useful):
+There are strategies one may enable, like middlewares:
 
 * Directed (*not yet*): relax the *undirected* constraint
-* Loopy (*not yet*): relax the *acyclic* constraint
+* Cyclic (*not yet*): relax the *acyclic* constraint
 * Atomic (*not yet*): relax the *connected* constraint
-
-There are also strategies one may enable:
-
-* a simple edge labeling scheme (increasing integer indexes), providing edges and nodes sorting facilities
+* A simple edge labeling scheme (increasing integer indexes), providing edges and nodes sorting facilities
+* Binary (*not yet*)
+* AVLTree (*not yet*)
+* RedBlackTree (*not yet*)
 
 ## Basic usage
 
@@ -35,32 +33,48 @@ To create an instance of a tree, you may use either inheritance or mixins.
 
 ### Inheritance or direct initialization
 
+All examples assume `include Jumoku`.
+
 ``` ruby
-class MyTree < Jumoku::Tree; end
+# smart:
+class MyTree < Tree; end
 tree = MyTree.new
 
-# or even simpler:
+# old school:
 tree = Jumoku::Tree.new
 ```
 
 ### Mixing-in a "builder" module
 
 ``` ruby
+# smartest
 class MyTree
-  include Jumoku::TreeBuilder
+  include TreeBuilder
 end
 tree = MyTree.new
 ```
 
-The RawTree class is actually implemented this way.
+The provided `Tree` class is actually implemented this way.
+
+### Enabling strategies
+
+Enable strategies with `#use`, passing either a module's constant within the `Strategies` namespace or a symbol.
+
+``` ruby
+arbo = Arborescence.new
+arbo.use Strategies::Binary
+arbo.use :simple_edge_labeling
+```
 
 ### What you get
 
-Following the previous code example, `tree` is now a Tree object, shipping with some default options:
+Following the previous code example, `tree` is now a `Tree` instance, shipping with some default options:
 
 * it is a valid tree *per se* (an undirected, acyclic, connected graph)
 * Jumoku API's methods will ensure it remains so as you manipulate it
 * it has no constraint on the number of branches per node (its branching number)
+
+`arbo` is an `Arborescence` instance, decorated by extended features: it will be ensured it grows as a binary tree, and will have its edges labeled by increasing integer indexes as new arcs get added.
 
 ## Install, first steps and bootstraping
 
