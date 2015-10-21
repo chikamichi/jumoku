@@ -1,3 +1,5 @@
+![unmaintained](http://img.shields.io/badge/status-unmaintained-red.png)
+
 **Build and manipulate tree structures in Ruby.**
 
 ## Synopsis
